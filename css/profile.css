@@ -1,0 +1,874 @@
+/* =========================================================
+   我的设置
+   ========================================================= */
+
+.page-hero-profile {
+  background:
+    radial-gradient(circle at 88% 12%, rgba(230, 174, 72, 0.12), transparent 22rem),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.48), transparent);
+}
+
+.page-hero-profile h1 {
+  max-width: 13em;
+}
+
+.profile-section {
+  padding-top: clamp(1.9rem, 3.6vw, 3.2rem);
+}
+
+.profile-summary {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(1.2rem, 3vw, 2rem);
+  padding: clamp(1.3rem, 3vw, 2rem);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(230, 174, 72, 0.1), transparent 28%),
+    var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 94px;
+  height: 94px;
+  color: #6f4908;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.55), transparent 42%),
+    var(--gold-soft);
+  border: 1px solid rgba(230, 174, 72, 0.4);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.profile-avatar::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1px dashed rgba(230, 174, 72, 0.42);
+  border-radius: 50%;
+}
+
+.profile-summary-copy {
+  min-width: 0;
+}
+
+.profile-summary-copy .eyebrow {
+  margin-bottom: 0.4rem;
+}
+
+.profile-summary-copy h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  line-height: 1.45;
+}
+
+.profile-summary-copy > p:not(.eyebrow) {
+  margin-top: 0.25rem;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.profile-name-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.profile-name-form > label {
+  color: var(--ink-faint);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.profile-name-row .input {
+  min-height: 40px;
+  width: min(200px, 42vw);
+  padding: 0.3rem 0.65rem;
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+.profile-name-row .btn {
+  min-height: 40px;
+  font-size: 0.72rem;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(74px, 1fr));
+  gap: 0;
+  border-left: 1px solid var(--line);
+}
+
+.profile-stat {
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 1.1rem;
+  flex-direction: column;
+  text-align: center;
+  border-right: 1px solid var(--line);
+}
+
+.profile-stat:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+
+.profile-stat-icon {
+  color: var(--brand);
+  font-size: 1.05rem;
+}
+
+.profile-stat strong {
+  margin-top: 0.2rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.profile-stat > span:last-child {
+  margin-top: 0.18rem;
+  color: var(--ink-faint);
+  font-size: 0.61rem;
+  white-space: nowrap;
+}
+
+/* ---------- 卡片布局 ---------- */
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(290px, 0.7fr);
+  align-items: start;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.profile-card {
+  padding: clamp(1.1rem, 2.4vw, 1.6rem);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.display-settings-card {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.profile-side {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.history-card {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.privacy-card {
+  grid-column: 1 / -1;
+  grid-row: 3;
+}
+
+.profile-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin-bottom: 1.1rem;
+}
+
+.profile-card-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  color: var(--brand-dark);
+  background: var(--brand-soft);
+  border-radius: 10px;
+  font-size: 1.05rem;
+  flex: 0 0 auto;
+}
+
+.profile-card-icon.warm {
+  color: #7a510c;
+  background: var(--gold-soft);
+}
+
+.profile-card-head h2 {
+  font-family: var(--font-display);
+  font-size: 1.18rem;
+  line-height: 1.4;
+}
+
+.profile-card-head p {
+  margin-top: 0.15rem;
+  color: var(--ink-faint);
+  font-size: 0.7rem;
+  line-height: 1.55;
+}
+
+.profile-head-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
+  color: var(--brand);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.profile-head-link:hover {
+  color: var(--brand-dark);
+}
+
+.profile-card .font-picker {
+  margin-top: 0.3rem;
+}
+
+.profile-card .settings-list {
+  margin-top: 1.1rem;
+}
+
+.profile-preview {
+  margin-top: 1.1rem;
+  padding: 0.8rem 1rem;
+  background: var(--surface-green);
+  border: 1px solid rgba(20, 107, 86, 0.11);
+  border-radius: 11px;
+}
+
+.profile-preview-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--brand);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.profile-preview p {
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.preview-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.45rem;
+  padding: 0;
+  color: var(--brand);
+  background: transparent;
+  border: 0;
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+
+.preview-read:hover {
+  color: var(--brand-dark);
+}
+
+/* ---------- 亲情联系人 ---------- */
+
+.contact-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+}
+
+.contact-avatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--brand-dark);
+  background: var(--brand-soft);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.contact-card-head h2 {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+}
+
+.contact-card-head p {
+  margin-top: 0.15rem;
+  color: var(--ink-faint);
+  font-size: 0.67rem;
+  line-height: 1.55;
+}
+
+.contact-details {
+  display: flex;
+  padding: 0.8rem 0.9rem;
+  flex-direction: column;
+  gap: 0.12rem;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.contact-details strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.contact-details span {
+  color: var(--ink-faint);
+  font-size: 0.66rem;
+}
+
+.contact-details .contact-phone {
+  margin-top: 0.2rem;
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
+}
+
+.contact-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+}
+
+.contact-actions .btn {
+  min-height: 40px;
+  flex: 1;
+  font-size: 0.72rem;
+}
+
+.contact-note {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.6rem;
+  color: var(--ink-faint);
+  font-size: 0.6rem;
+  line-height: 1.5;
+}
+
+.contact-note [data-icon] {
+  color: var(--brand);
+}
+
+/* ---------- 学习档案 ---------- */
+
+.profile-card-head.compact {
+  margin-bottom: 0.9rem;
+}
+
+.learning-summary-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.mini-progress-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 70px;
+  height: 70px;
+  flex: 0 0 auto;
+  background: conic-gradient(var(--brand) calc(var(--progress) * 1%), var(--line) 0);
+  border-radius: 50%;
+}
+
+.mini-progress-ring::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  background: var(--surface);
+  border-radius: 50%;
+}
+
+.mini-progress-ring span {
+  position: relative;
+  z-index: 1;
+  color: var(--brand-dark);
+  font-family: var(--font-display);
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.learning-summary-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.learning-summary-copy strong {
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.learning-summary-copy span {
+  color: var(--ink-faint);
+  font-size: 0.64rem;
+  line-height: 1.5;
+}
+
+.profile-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.8rem;
+  color: var(--brand);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.profile-text-link:hover {
+  color: var(--brand-dark);
+}
+
+/* ---------- 识别记录 ---------- */
+
+.profile-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.profile-history-item {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  text-decoration: none;
+}
+
+.profile-history-item:hover {
+  border-color: var(--line-strong);
+  background: var(--brand-pale);
+}
+
+.profile-history-risk {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.59rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.profile-history-risk.risk-high {
+  color: var(--danger-dark);
+  background: var(--danger-soft);
+}
+
+.profile-history-risk.risk-medium {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+
+.profile-history-risk.risk-low {
+  color: var(--brand-dark);
+  background: var(--brand-soft);
+}
+
+.profile-history-risk.risk-none {
+  color: var(--safe);
+  background: var(--safe-soft);
+}
+
+.profile-history-main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.08rem;
+}
+
+.profile-history-main strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-history-main span {
+  color: var(--ink-faint);
+  font-size: 0.59rem;
+}
+
+.profile-history-item > [data-icon] {
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+}
+
+.profile-history-empty {
+  padding: 1.4rem 1rem;
+  text-align: center;
+  background: var(--surface-soft);
+  border: 1px dashed var(--line-strong);
+  border-radius: 10px;
+}
+
+.profile-history-empty > [data-icon] {
+  margin: 0 auto 0.4rem;
+  color: var(--ink-faint);
+  font-size: 1.7rem;
+}
+
+.profile-history-empty p {
+  max-width: 28rem;
+  margin: 0 auto 0.7rem;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  line-height: 1.65;
+}
+
+.profile-history-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--line);
+}
+
+.profile-history-foot > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--ink-faint);
+  font-size: 0.6rem;
+}
+
+.profile-danger-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0;
+  color: var(--ink-faint);
+  background: transparent;
+  border: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.profile-danger-link:hover {
+  color: var(--danger-dark);
+}
+
+/* ---------- 隐私 ---------- */
+
+.privacy-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  list-style: none;
+}
+
+.privacy-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  line-height: 1.65;
+}
+
+.privacy-list [data-icon] {
+  margin-top: 0.14rem;
+  color: var(--safe);
+  font-size: 0.9rem;
+  flex: 0 0 auto;
+}
+
+.privacy-list strong {
+  color: var(--ink);
+}
+
+.privacy-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+}
+
+.privacy-actions .btn {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+}
+
+.privacy-hint {
+  color: var(--ink-faint);
+  font-size: 0.64rem;
+  line-height: 1.55;
+}
+
+/* ---------- 底部提示 ---------- */
+
+.profile-help {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 1.2rem 1.4rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.profile-help-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  border-radius: 50%;
+  font-size: 1.35rem;
+  flex: 0 0 auto;
+}
+
+.profile-help h2 {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+}
+
+.profile-help p {
+  margin-top: 0.18rem;
+  color: var(--ink-soft);
+  font-size: 0.74rem;
+  line-height: 1.6;
+}
+
+.profile-help-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 1080px) {
+  .profile-summary {
+    grid-template-columns: 90px minmax(0, 1fr);
+  }
+
+  .profile-stats {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .profile-stat:first-child {
+    padding-left: 0;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .display-settings-card,
+  .history-card,
+  .privacy-card {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .profile-side {
+    grid-column: 1;
+    grid-row: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .privacy-list {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .profile-summary {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .profile-avatar {
+    width: 78px;
+    height: 78px;
+    font-size: 2rem;
+  }
+
+  .profile-stats {
+    grid-column: auto;
+  }
+
+  .profile-stat {
+    padding: 0.2rem 0.6rem;
+  }
+
+  .profile-name-form {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .profile-name-row {
+    width: 100%;
+  }
+
+  .profile-name-row .input {
+    width: 100%;
+  }
+
+  .profile-side {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card-head {
+    flex-wrap: wrap;
+  }
+
+  .profile-head-link {
+    margin-left: 0;
+    padding-left: 3rem;
+  }
+
+  .privacy-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile-help {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .profile-help-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .profile-help-actions .btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 460px) {
+  .profile-history-item {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .profile-history-item > [data-icon] {
+    display: none;
+  }
+
+  .profile-history-foot {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+}
+
+/* ---------- 长辈阅读可读性补充 ---------- */
+
+.profile-summary-copy > p:not(.eyebrow) {
+  font-size: 0.84rem;
+}
+
+.profile-name-form > label {
+  font-size: 0.76rem;
+}
+
+.profile-stat > span:last-child {
+  font-size: 0.67rem;
+}
+
+.profile-card-head p {
+  font-size: 0.77rem;
+}
+
+.contact-card-head p {
+  font-size: 0.74rem;
+}
+
+.contact-details span {
+  font-size: 0.72rem;
+}
+
+.contact-note {
+  font-size: 0.67rem;
+}
+
+.learning-summary-copy strong {
+  font-size: 0.85rem;
+}
+
+.learning-summary-copy span {
+  font-size: 0.7rem;
+}
+
+.profile-history-main strong {
+  font-size: 0.8rem;
+}
+
+.profile-history-main span {
+  font-size: 0.65rem;
+}
+
+.profile-history-empty p {
+  font-size: 0.79rem;
+}
+
+.privacy-list li {
+  font-size: 0.8rem;
+}
+
+.privacy-hint {
+  font-size: 0.7rem;
+}
+
+.profile-help p {
+  font-size: 0.8rem;
+}

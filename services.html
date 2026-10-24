@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-font="large">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f5f0e5" />
+  <meta name="description" content="银龄无诈便民服务：挂号、社保医保、生活缴费、打车、视频通话，用大字分步教会长辈办理常用事项，并可朗读和复制步骤。" />
+  <title>便民服务 · 银龄无诈</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+  <link rel="stylesheet" href="css/services.css" />
+  <script src="js/app.js" defer></script>
+  <script src="js/services.js" defer></script>
+</head>
+<body data-page="services">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <div class="top-strip">
+    <div class="container-wide top-strip-inner">
+      <p><span class="top-dot" aria-hidden="true"></span>数字生活，有人帮 · 大字模式可随时开启</p>
+      <p>
+        反诈专线 <a href="tel:96110">96110</a>
+        <span class="top-sep" aria-hidden="true">·</span>
+        紧急求助 <a href="tel:110">110</a>
+      </p>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container-wide header-inner">
+      <a class="brand" href="index.html" aria-label="银龄无诈首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
+            <g stroke="#fff9eb" stroke-width="2.3" stroke-linecap="round">
+              <path d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3"></path>
+            </g>
+            <path d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z" fill="#fff9eb"></path>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>银龄无诈</strong>
+          <small>数字生活，有人帮</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <a class="nav-link" href="index.html">首页</a>
+        <a class="nav-link" href="fraud.html">反诈检测</a>
+        <a class="nav-link" href="services.html" aria-current="page">便民服务</a>
+        <a class="nav-link" href="learn.html">手机课堂</a>
+        <a class="nav-link" href="profile.html">我的</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="display-toggle" id="quickFontToggle" type="button" aria-pressed="true" aria-label="大字模式，当前已开启">
+          <span class="display-a" aria-hidden="true">A</span>
+          <span class="display-label">大字模式</span>
+          <span class="mini-switch" aria-hidden="true"></span>
+        </button>
+        <button class="icon-btn display-more" type="button" data-open-dialog="displayDialog" aria-label="字号与显示设置" title="显示设置">
+          <span data-icon="settings"></span>
+        </button>
+        <button class="icon-btn menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+          <span data-icon="menu"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero page-hero-services">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="面包屑">
+          <a href="index.html">首页</a>
+          <span data-icon="chevron-right"></span>
+          <span>便民服务</span>
+        </nav>
+        <div class="page-hero-inner">
+          <div>
+            <span class="page-hero-tag"><span data-icon="list"></span>一步一步，有人教</span>
+            <h1>办事不用跑，<br />慢慢教您做。</h1>
+            <p class="page-lead">
+              看病、社保、缴费、出行……把常用的事整理成清楚的大字步骤。不会操作没关系，可以跟着做，也可以读给您听。
+            </p>
+          </div>
+          <div class="page-hero-note">
+            <span data-icon="info"></span>
+            <p>不同城市和手机上的页面会略有不同，请认准官方入口，以实际页面为准。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section services-section" aria-labelledby="servicesTitle">
+      <div class="container">
+        <div class="services-toolbar">
+          <div class="service-search">
+            <span class="search-icon" data-icon="search"></span>
+            <label class="sr-only" for="serviceSearch">搜索服务</label>
+            <input
+              class="service-search-input"
+              id="serviceSearch"
+              type="search"
+              placeholder="找一找：挂号、社保、缴费……"
+              autocomplete="off"
+            />
+            <button class="search-clear" id="searchClear" type="button" aria-label="清空搜索" hidden>
+              <span data-icon="close"></span>
+            </button>
+          </div>
+          <div class="category-chips" id="categoryChips" role="group" aria-label="按类别筛选">
+            <button class="category-chip is-active" type="button" data-category="all" aria-pressed="true">全部</button>
+            <button class="category-chip" type="button" data-category="medical" aria-pressed="false">看病就医</button>
+            <button class="category-chip" type="button" data-category="social" aria-pressed="false">社保医保</button>
+            <button class="category-chip" type="button" data-category="life" aria-pressed="false">生活缴费</button>
+            <button class="category-chip" type="button" data-category="travel" aria-pressed="false">出行联系</button>
+          </div>
+        </div>
+
+        <div class="services-meta">
+          <h2 class="services-heading" id="servicesTitle">常用服务</h2>
+          <p class="services-count" id="serviceCount" role="status" aria-live="polite">共 8 项服务</p>
+        </div>
+
+        <div class="services-grid" id="serviceGrid" aria-busy="true"></div>
+        <div class="services-empty" id="servicesEmpty" hidden>
+          <span class="services-empty-icon" data-icon="search"></span>
+          <h3>没有找到相关服务</h3>
+          <p>换一个词试试，比如“挂号”“医保”“缴费”。</p>
+          <button class="btn btn-secondary btn-sm" id="resetFilters" type="button">看看全部服务</button>
+        </div>
+
+        <p class="services-note">
+          <span data-icon="shield-check"></span>
+          银龄无诈只提供操作步骤，不会替您付款，也不会向您索要银行卡或验证码。办理业务请认准官方 App、小程序或服务大厅。
+        </p>
+      </div>
+    </section>
+
+    <section class="emergency-section" id="emergency" aria-labelledby="emergencyTitle">
+      <div class="container">
+        <div class="emergency-head">
+          <div>
+            <p class="eyebrow eyebrow-light">紧急时刻</p>
+            <h2 class="section-title" id="emergencyTitle">这几个电话，请一定记住</h2>
+            <p>遇到危险、身体不舒服，或者怀疑被骗，先打电话，不要自己扛着。</p>
+          </div>
+          <span class="emergency-badge"><span data-icon="phone-call"></span>建议收藏本页</span>
+        </div>
+
+        <div class="emergency-grid">
+          <a class="emergency-card emergency-red" href="tel:120">
+            <span class="emergency-icon" data-icon="hospital"></span>
+            <span class="emergency-copy">
+              <strong>120</strong>
+              <span>急救电话</span>
+              <small>说清地址和病人情况</small>
+            </span>
+            <span class="emergency-call" data-icon="phone"></span>
+          </a>
+          <a class="emergency-card emergency-clay" href="tel:110">
+            <span class="emergency-icon" data-icon="siren"></span>
+            <span class="emergency-copy">
+              <strong>110</strong>
+              <span>报警求助</span>
+              <small>已经被骗，立即报警</small>
+            </span>
+            <span class="emergency-call" data-icon="phone"></span>
+          </a>
+          <a class="emergency-card emergency-gold" href="tel:96110">
+            <span class="emergency-icon" data-icon="shield-check"></span>
+            <span class="emergency-copy">
+              <strong>96110</strong>
+              <span>反诈专线</span>
+              <small>拿不准就先打这个电话</small>
+            </span>
+            <span class="emergency-call" data-icon="phone"></span>
+          </a>
+          <div class="emergency-card emergency-family">
+            <a class="family-call" id="familyEmergencyCall" data-contact-call href="#contact">
+              <span class="emergency-icon" data-icon="users"></span>
+              <span class="emergency-copy">
+                <strong id="familyPhoneLabel">家人电话</strong>
+                <span id="familyNameLabel">设置后一键联系</span>
+                <small id="familyPhoneSub">还没有填写号码</small>
+              </span>
+              <span class="emergency-call" data-icon="phone"></span>
+            </a>
+            <button class="family-edit" type="button" data-open-dialog="contactDialog" aria-label="设置或修改家人电话">
+              <span data-icon="edit"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="emergency-tips">
+          <div><span data-icon="map-pin"></span><p><strong>说清地址：</strong>小区名称、楼栋、单元、门牌号，能说多清楚就说多清楚。</p></div>
+          <div><span data-icon="phone-call"></span><p><strong>保持通话：</strong>打完 120 或 110 后，保持电话畅通，听从接线员安排。</p></div>
+          <div><span data-icon="heart-hand"></span><p><strong>不要自责：</strong>被骗不是您的错，及时告诉家人和警察，才能尽快止损。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight service-help-section">
+      <div class="container">
+        <div class="service-help-card">
+          <span class="service-help-icon" data-icon="heart"></span>
+          <div>
+            <h2>还是不会操作，怎么办？</h2>
+            <p>可以直接到社区服务中心、医院导诊台或银行柜台，请工作人员帮忙。也可以让家人打开这一页，读给您听。</p>
+          </div>
+          <a class="btn btn-secondary" href="learn.html"><span class="btn-icon" data-icon="book-open"></span>去手机课堂</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="modal modal-wide service-dialog" id="serviceDialog" aria-labelledby="serviceDialogTitle">
+    <div class="modal-shell">
+      <button class="modal-close" type="button" data-close-dialog aria-label="关闭服务步骤">
+        <span data-icon="close"></span>
+      </button>
+      <div id="serviceDialogContent"></div>
+    </div>
+  </dialog>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="银龄无诈首页">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
+              <g stroke="#fff9eb" stroke-width="2.3" stroke-linecap="round">
+                <path d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3"></path>
+              </g>
+              <path d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z" fill="#fff9eb"></path>
+            </svg>
+          </span>
+          <span class="brand-text">
+            <strong>银龄无诈</strong>
+            <small>数字生活，有人帮</small>
+          </span>
+        </a>
+        <p class="footer-tagline">为长辈设计的数字助老平台。大字、慢一点、说清楚，是我们做每一件事的起点。</p>
+      </div>
+      <div>
+        <h3 class="footer-heading">常用入口</h3>
+        <ul class="footer-links">
+          <li><a href="fraud.html">反诈识别</a></li>
+          <li><a href="services.html">便民服务</a></li>
+          <li><a href="learn.html">手机课堂</a></li>
+          <li><a href="profile.html">我的设置</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-heading">紧急电话</h3>
+        <p class="footer-phone"><strong>110</strong><span>报警求助</span></p>
+        <p class="footer-phone"><strong>120</strong><span>急救电话</span></p>
+        <p class="footer-phone"><strong>96110</strong><span>反诈专线</span></p>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>© <span id="footerYear">2026</span> 银龄无诈 · 数字助老前端演示项目</p>
+      <p>识别建议仅供参考，紧急情况请及时报警。</p>
+    </div>
+  </footer>
+</body>
+</html>

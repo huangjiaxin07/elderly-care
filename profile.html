@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-font="large">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f5f0e5" />
+  <meta name="description" content="银龄无诈个人设置：调整字体、高对比度、自动朗读，管理亲情联系人、安全识别记录和学习进度。所有数据仅保存在本机。" />
+  <title>我的设置 · 银龄无诈</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+  <link rel="stylesheet" href="css/profile.css" />
+  <script src="js/app.js" defer></script>
+  <script src="js/profile.js" defer></script>
+</head>
+<body data-page="profile">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <div class="top-strip">
+    <div class="container-wide top-strip-inner">
+      <p><span class="top-dot" aria-hidden="true"></span>数字生活，有人帮 · 大字模式可随时开启</p>
+      <p>
+        反诈专线 <a href="tel:96110">96110</a>
+        <span class="top-sep" aria-hidden="true">·</span>
+        紧急求助 <a href="tel:110">110</a>
+      </p>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container-wide header-inner">
+      <a class="brand" href="index.html" aria-label="银龄无诈首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
+            <g stroke="#fff9eb" stroke-width="2.3" stroke-linecap="round">
+              <path d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3"></path>
+            </g>
+            <path d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z" fill="#fff9eb"></path>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>银龄无诈</strong>
+          <small>数字生活，有人帮</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <a class="nav-link" href="index.html">首页</a>
+        <a class="nav-link" href="fraud.html">反诈检测</a>
+        <a class="nav-link" href="services.html">便民服务</a>
+        <a class="nav-link" href="learn.html">手机课堂</a>
+        <a class="nav-link" href="profile.html" aria-current="page">我的</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="display-toggle" id="quickFontToggle" type="button" aria-pressed="true" aria-label="大字模式，当前已开启">
+          <span class="display-a" aria-hidden="true">A</span>
+          <span class="display-label">大字模式</span>
+          <span class="mini-switch" aria-hidden="true"></span>
+        </button>
+        <button class="icon-btn display-more" type="button" data-open-dialog="displayDialog" aria-label="字号与显示设置" title="显示设置">
+          <span data-icon="settings"></span>
+        </button>
+        <button class="icon-btn menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+          <span data-icon="menu"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero page-hero-profile">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="面包屑">
+          <a href="index.html">首页</a>
+          <span data-icon="chevron-right"></span>
+          <span>我的设置</span>
+        </nav>
+        <div class="page-hero-inner">
+          <div>
+            <span class="page-hero-tag"><span data-icon="user"></span>我的安心空间</span>
+            <h1>把银龄无诈，<br />调成您喜欢的样子。</h1>
+            <p class="page-lead">字号、对比度、朗读，还有家人电话和学习记录，都在这里。所有内容只保存在这台设备上。</p>
+          </div>
+          <div class="page-hero-note">
+            <span data-icon="lock"></span>
+            <p>无需注册账号，也不会把您的设置、聊天内容或学习记录上传到任何服务器。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section profile-section">
+      <div class="container">
+        <section class="profile-summary" aria-labelledby="profileName">
+          <div class="profile-avatar" aria-hidden="true"><span id="profileAvatar">暖</span></div>
+          <div class="profile-summary-copy">
+            <p class="eyebrow">您好呀</p>
+            <h2 id="profileName"><span data-profile-name>长辈朋友</span>，今天也慢慢来。</h2>
+            <p>这里没有复杂的功能，只有让眼睛更舒服、心里更踏实的设置。</p>
+            <form class="profile-name-form" id="profileNameForm">
+              <label for="profileNameInput">怎么称呼您？</label>
+              <div class="profile-name-row">
+                <input class="input" id="profileNameInput" name="profileName" maxlength="12" autocomplete="nickname" placeholder="例如：李阿姨" />
+                <button class="btn btn-secondary btn-sm" type="submit">
+                  <span class="btn-icon" data-icon="check"></span>保存称呼
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <span class="profile-stat-icon" data-icon="book-open"></span>
+              <strong id="profileLessonCount">0</strong>
+              <span>已学会课程</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat-icon" data-icon="shield-check"></span>
+              <strong id="profileCheckCount">0</strong>
+              <span>安全识别次数</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat-icon" data-icon="type"></span>
+              <strong id="profileFontLabel">大字</strong>
+              <span>当前字号</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="profile-grid">
+          <section class="profile-card display-settings-card" aria-labelledby="profileDisplayTitle">
+            <div class="profile-card-head">
+              <span class="profile-card-icon"><span data-icon="type"></span></span>
+              <div>
+                <h2 id="profileDisplayTitle">显示与阅读</h2>
+                <p>字大一点、对比清楚一点，看着不费劲。</p>
+              </div>
+            </div>
+
+            <fieldset class="font-picker">
+              <legend>选择字号</legend>
+              <div class="font-options">
+                <label class="font-option">
+                  <input type="radio" name="profileFont" value="normal" />
+                  <span class="font-option-body">
+                    <span class="font-sample" aria-hidden="true">Aa</span>
+                    <span class="font-option-label">标准</span>
+                    <small>字小一点</small>
+                  </span>
+                </label>
+                <label class="font-option">
+                  <input type="radio" name="profileFont" value="large" />
+                  <span class="font-option-body">
+                    <span class="font-recommend">推荐</span>
+                    <span class="font-sample" aria-hidden="true">Aa</span>
+                    <span class="font-option-label">大字</span>
+                    <small>舒服好读</small>
+                  </span>
+                </label>
+                <label class="font-option">
+                  <input type="radio" name="profileFont" value="xlarge" />
+                  <span class="font-option-body">
+                    <span class="font-sample" aria-hidden="true">Aa</span>
+                    <span class="font-option-label">特大</span>
+                    <small>看得更清楚</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="settings-list">
+              <label class="switch-row" for="profileContrast">
+                <span class="switch-copy">
+                  <strong>高对比度</strong>
+                  <small>文字更黑、边界更清楚，适合光线较亮时阅读。</small>
+                </span>
+                <span class="switch">
+                  <input type="checkbox" id="profileContrast" />
+                  <span class="switch-track" aria-hidden="true"></span>
+                </span>
+              </label>
+              <label class="switch-row" for="profileMotion">
+                <span class="switch-copy">
+                  <strong>减少动画</strong>
+                  <small>关闭多余动效，页面更安稳。</small>
+                </span>
+                <span class="switch">
+                  <input type="checkbox" id="profileMotion" />
+                  <span class="switch-track" aria-hidden="true"></span>
+                </span>
+              </label>
+              <label class="switch-row" for="profileAutoRead">
+                <span class="switch-copy">
+                  <strong>自动朗读识别结果</strong>
+                  <small>反诈识别完成后，自动为您读出结果。</small>
+                </span>
+                <span class="switch">
+                  <input type="checkbox" id="profileAutoRead" />
+                  <span class="switch-track" aria-hidden="true"></span>
+                </span>
+              </label>
+            </div>
+
+            <div class="profile-preview">
+              <span class="profile-preview-label">效果预览</span>
+              <p>陌生来电不要急，先挂断，再和家人或 96110 核实。</p>
+              <button class="preview-read" type="button" data-read-text="陌生来电不要急，先挂断，再和家人或 96110 核实。">
+                <span data-icon="volume"></span>读一遍
+              </button>
+            </div>
+          </section>
+
+          <aside class="profile-side">
+            <section class="profile-card contact-card" aria-labelledby="contactCardTitle">
+              <div class="contact-card-head">
+                <span class="contact-avatar" id="contactAvatar" aria-hidden="true">家</span>
+                <div>
+                  <h2 id="contactCardTitle">亲情联系人</h2>
+                  <p>遇到拿不准的事，先给家人打电话。</p>
+                </div>
+              </div>
+              <div class="contact-details">
+                <strong id="contactDisplayName">还没有设置</strong>
+                <span id="contactDisplayRelation">建议设置一位子女或亲友</span>
+                <span class="contact-phone" id="contactDisplayPhone">号码只保存在本机</span>
+              </div>
+              <div class="contact-actions">
+                <a class="btn btn-primary btn-sm" id="profileContactCall" data-contact-call href="#contact">
+                  <span class="btn-icon" data-icon="phone"></span>拨打电话
+                </a>
+                <button class="btn btn-secondary btn-sm" type="button" data-open-dialog="contactDialog">
+                  <span class="btn-icon" data-icon="edit"></span>设置
+                </button>
+              </div>
+              <p class="contact-note"><span data-icon="lock"></span>电话号码只保存在这台设备，不会上传。</p>
+            </section>
+
+            <section class="profile-card learning-summary-card" aria-labelledby="learningSummaryTitle">
+              <div class="profile-card-head compact">
+                <span class="profile-card-icon warm"><span data-icon="book-open"></span></span>
+                <div>
+                  <h2 id="learningSummaryTitle">学习小档案</h2>
+                  <p>每次学会一点，都算数。</p>
+                </div>
+              </div>
+              <div class="learning-summary-row">
+                <div class="mini-progress-ring" id="profileProgressRing" style="--progress: 0">
+                  <span id="profileProgressPercent">0%</span>
+                </div>
+                <div class="learning-summary-copy">
+                  <strong id="profileLearningText">还没有开始学习</strong>
+                  <span id="profileQuizBest">小测验：还没有作答</span>
+                </div>
+              </div>
+              <a class="profile-text-link" href="learn.html">
+                去手机课堂<span data-icon="arrow-right"></span>
+              </a>
+            </section>
+          </aside>
+
+          <section class="profile-card history-card" aria-labelledby="profileHistoryTitle">
+            <div class="profile-card-head">
+              <span class="profile-card-icon"><span data-icon="shield-check"></span></span>
+              <div>
+                <h2 id="profileHistoryTitle">安全识别记录</h2>
+                <p>只保存在本机，最多保留 6 条。</p>
+              </div>
+              <a class="profile-head-link" href="fraud.html">去识别<span data-icon="arrow-right"></span></a>
+            </div>
+            <div class="profile-history-list" id="profileHistoryList"></div>
+            <div class="profile-history-empty" id="profileHistoryEmpty" hidden>
+              <span data-icon="search-shield"></span>
+              <p>还没有识别记录。收到可疑消息时，可以来让银龄无诈看看。</p>
+              <a class="btn btn-secondary btn-sm" href="fraud.html">识别一条消息</a>
+            </div>
+            <div class="profile-history-foot" id="profileHistoryFoot" hidden>
+              <span><span data-icon="lock"></span>记录不会上传</span>
+              <button class="profile-danger-link" id="profileClearHistory" type="button">
+                <span data-icon="trash"></span>清空识别记录
+              </button>
+            </div>
+          </section>
+
+          <section class="profile-card privacy-card" aria-labelledby="privacyTitle">
+            <div class="profile-card-head">
+              <span class="profile-card-icon warm"><span data-icon="lock"></span></span>
+              <div>
+                <h2 id="privacyTitle">数据与隐私</h2>
+                <p>您的东西，只留在您自己的设备里。</p>
+              </div>
+            </div>
+            <ul class="privacy-list">
+              <li><span data-icon="check"></span><span><strong>不上传：</strong>反诈识别在本机完成，聊天内容不会离开设备。</span></li>
+              <li><span data-icon="check"></span><span><strong>不登录：</strong>不需要手机号、不需要注册账号，也没有广告追踪。</span></li>
+              <li><span data-icon="check"></span><span><strong>可清除：</strong>您可以随时清空识别记录、学习进度和个人设置。</span></li>
+            </ul>
+            <div class="privacy-actions">
+              <button class="btn btn-secondary btn-sm" id="profileResetAll" type="button">
+                <span class="btn-icon" data-icon="refresh"></span>清除全部本机数据
+              </button>
+              <span class="privacy-hint">清除后，字号、称呼和记录都会恢复初始状态。</span>
+            </div>
+          </section>
+        </div>
+
+        <div class="profile-help">
+          <span class="profile-help-icon" data-icon="heart-hand"></span>
+          <div>
+            <h2>设置好了，去用用看吧。</h2>
+            <p>遇到不懂的地方，随时回来调整。没有什么是必须一次学会的。</p>
+          </div>
+          <div class="profile-help-actions">
+            <a class="btn btn-secondary btn-sm" href="services.html">看便民服务</a>
+            <a class="btn btn-primary btn-sm" href="fraud.html">识别可疑消息<span data-icon="arrow-right"></span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="银龄无诈首页">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
+              <g stroke="#fff9eb" stroke-width="2.3" stroke-linecap="round">
+                <path d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3"></path>
+              </g>
+              <path d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z" fill="#fff9eb"></path>
+            </svg>
+          </span>
+          <span class="brand-text">
+            <strong>银龄无诈</strong>
+            <small>数字生活，有人帮</small>
+          </span>
+        </a>
+        <p class="footer-tagline">为长辈设计的数字助老平台。大字、慢一点、说清楚，是我们做每一件事的起点。</p>
+      </div>
+      <div>
+        <h3 class="footer-heading">常用入口</h3>
+        <ul class="footer-links">
+          <li><a href="fraud.html">反诈识别</a></li>
+          <li><a href="services.html">便民服务</a></li>
+          <li><a href="learn.html">手机课堂</a></li>
+          <li><a href="profile.html">我的设置</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-heading">紧急电话</h3>
+        <p class="footer-phone"><strong>110</strong><span>报警求助</span></p>
+        <p class="footer-phone"><strong>120</strong><span>急救电话</span></p>
+        <p class="footer-phone"><strong>96110</strong><span>反诈专线</span></p>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>© <span id="footerYear">2026</span> 银龄无诈 · 数字助老前端演示项目</p>
+      <p>识别建议仅供参考，紧急情况请及时报警。</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-font="large">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f5f0e5" />
+  <meta name="description" content="银龄无诈是为长辈设计的数字助老平台：大字模式、便民办事步骤、AI 反诈识别，让数字生活更简单、更安心。" />
+  <title>银龄无诈 · 数字生活，有人帮</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/pages.css" />
+  <script src="js/app.js" defer></script>
+  <script src="js/home.js" defer></script>
+</head>
+<body data-page="home">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <div class="top-strip">
+    <div class="container-wide top-strip-inner">
+      <p><span class="top-dot" aria-hidden="true"></span>数字生活，有人帮 · 大字模式可随时开启</p>
+      <p>
+        反诈专线 <a href="tel:96110">96110</a>
+        <span class="top-sep" aria-hidden="true">·</span>
+        紧急求助 <a href="tel:110">110</a>
+      </p>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container-wide header-inner">
+      <a class="brand" href="index.html" aria-label="银龄无诈首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
+            <g stroke="#fff9eb" stroke-width="2.3" stroke-linecap="round">
+              <path d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3"></path>
+            </g>
+            <path d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z" fill="#fff9eb"></path>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>银龄无诈</strong>
+          <small>数字生活，有人帮</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <a class="nav-link" href="index.html" aria-current="page">首页</a>
+        <a class="nav-link" href="fraud.html">反诈检测</a>
+        <a class="nav-link" href="services.html">便民服务</a>
+        <a class="nav-link" href="learn.html">手机课堂</a>
+        <a class="nav-link" href="profile.html">我的</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="display-toggle" id="quickFontToggle" type="button" aria-pressed="true" aria-label="大字模式，当前已开启">
+          <span class="display-a" aria-hidden="true">A</span>
+          <span class="display-label">大字模式</span>
+          <span class="mini-switch" aria-hidden="true"></span>
+        </button>
+        <button class="icon-btn display-more" type="button" data-open-dialog="displayDialog" aria-label="字号与显示设置" title="显示设置">
+          <span data-icon="settings"></span>
+        </button>
+        <button class="icon-btn menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+          <span data-icon="menu"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 首屏 -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <p class="hero-greeting" id="heroGreeting">
+            <span class="greeting-sun" aria-hidden="true"><span data-icon="sun"></span></span>
+            <span>早上好，欢迎回来。</span>
+          </p>
+          <h1>数字生活，<br /><span class="hero-accent">有人帮，更安心。</span></h1>
+          <p class="hero-lead">
+            银龄无诈为长辈准备了更大的字、更清楚的步骤，还有一位会看可疑消息的 AI 帮手。复杂的事，我们陪您慢慢来。
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="fraud.html">
+              <span class="btn-icon" data-icon="search-shield"></span>
+              帮我看看可疑消息
+              <span class="btn-arrow" data-icon="arrow-right"></span>
+            </a>
+            <a class="btn btn-secondary btn-lg" href="learn.html">
+              <span class="btn-icon" data-icon="book-open"></span>
+              先学一个小技巧
+            </a>
+          </div>
+          <ul class="trust-list" aria-label="平台特点">
+            <li><span data-icon="lock"></span>本地识别，聊天内容不上传</li>
+            <li><span data-icon="type"></span>大字大按钮，看得清</li>
+            <li><span data-icon="volume"></span>随时可以读给您听</li>
+          </ul>
+        </div>
+
+        <div class="hero-visual" aria-label="银龄无诈安心守护功能预览">
+          <div class="hero-arch" aria-hidden="true">
+            <span class="arch-sun"></span>
+            <span class="arch-line arch-line-one"></span>
+            <span class="arch-line arch-line-two"></span>
+          </div>
+
+          <div class="float-note float-note-top">
+            <span class="float-note-icon"><span data-icon="cpu"></span></span>
+            <span><strong>AI 反诈识别</strong><small>先看清，再决定</small></span>
+          </div>
+
+          <article class="guardian-card">
+            <div class="guardian-top">
+              <span class="guardian-brand"><span data-icon="sun"></span>今日安心守护</span>
+              <span class="status-pill"><span class="status-dot"></span>已开启</span>
+            </div>
+
+            <div class="guardian-intro">
+              <span class="guardian-shield" aria-hidden="true"><span data-icon="shield-check"></span></span>
+              <div>
+                <h2>有疑问，先停一停</h2>
+                <p>把消息交给银龄无诈，半分钟看看有没有风险。</p>
+              </div>
+            </div>
+
+            <div class="sample-message">
+              <div class="sample-message-top">
+                <span class="sample-source"><span data-icon="message"></span>示例消息</span>
+                <span class="risk-chip risk-high">高风险</span>
+              </div>
+              <p>“您的快递丢失，点击链接办理双倍理赔……”</p>
+              <div class="sample-signals">
+                <span>陌生链接</span>
+                <span>催促点击</span>
+                <span>冒充客服</span>
+              </div>
+            </div>
+
+            <div class="guardian-foot">
+              <span><span data-icon="lock"></span>内容只在本机分析</span>
+              <a href="fraud.html">我也试试<span data-icon="arrow-right"></span></a>
+            </div>
+          </article>
+
+          <div class="float-note float-note-bottom">
+            <span class="float-note-icon warm"><span data-icon="type"></span></span>
+            <span><strong>大字模式</strong><small>不用眯着眼看</small></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 快捷入口 -->
+    <section class="section quick-section" aria-labelledby="quickTitle">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">今天想做什么</p>
+            <h2 class="section-title" id="quickTitle">点一下，就有人带您一步步来</h2>
+            <p class="section-desc">不用记复杂步骤，也不怕点错。每个入口都把话说得明白。</p>
+          </div>
+          <a class="text-link" href="services.html">全部便民服务<span data-icon="arrow-right"></span></a>
+        </div>
+
+        <div class="quick-grid">
+          <a class="quick-card quick-card-featured" href="fraud.html">
+            <span class="quick-icon"><span data-icon="search-shield"></span></span>
+            <span class="quick-body">
+              <strong>识别可疑信息</strong>
+              <small>短信、链接、聊天记录，先看看再说</small>
+            </span>
+            <span class="quick-arrow" data-icon="arrow-right"></span>
+            <span class="quick-tag">最常用</span>
+          </a>
+
+          <a class="quick-card" href="learn.html?lesson=video">
+            <span class="quick-icon tone-green"><span data-icon="video"></span></span>
+            <span class="quick-body">
+              <strong>和家人视频</strong>
+              <small>一步一步学，看见家人的脸</small>
+            </span>
+            <span class="quick-arrow" data-icon="arrow-right"></span>
+          </a>
+
+          <a class="quick-card" href="services.html#appointment">
+            <span class="quick-icon tone-gold"><span data-icon="calendar"></span></span>
+            <span class="quick-body">
+              <strong>预约医院挂号</strong>
+              <small>提前约好，少排队少跑腿</small>
+            </span>
+            <span class="quick-arrow" data-icon="arrow-right"></span>
+          </a>
+
+          <a class="quick-card" href="services.html#social-security">
+            <span class="quick-icon tone-blue"><span data-icon="id-card"></span></span>
+            <span class="quick-body">
+              <strong>查社保医保</strong>
+              <small>余额、认证，认准官方入口</small>
+            </span>
+            <span class="quick-arrow" data-icon="arrow-right"></span>
+          </a>
+
+          <a class="quick-card" href="services.html#utilities">
+            <span class="quick-icon tone-clay"><span data-icon="wallet"></span></span>
+            <span class="quick-body">
+              <strong>生活缴费</strong>
+              <small>水电燃气，在家就能交</small>
+            </span>
+            <span class="quick-arrow" data-icon="arrow-right"></span>
+          </a>
+
+          <a class="quick-card" href="services.html#emergency">
+            <span class="quick-icon tone-red"><span data-icon="siren"></span></span>
+            <span class="quick-body">
+              <strong>紧急求助</strong>
+              <small>记住 110、120、96110</small>
+            </span>
+            <span class="quick-arrow" data-icon="arrow-right"></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI 反诈 -->
+    <section class="section safety-section" aria-labelledby="safetyTitle">
+      <div class="container safety-inner">
+        <div class="safety-copy">
+          <p class="eyebrow">AI 反诈识别</p>
+          <h2 class="section-title" id="safetyTitle">陌生消息，先别回。<br />让我帮您看一看。</h2>
+          <p class="section-desc">
+            把收到的短信、聊天内容或网址粘贴进来，银龄无诈会帮您找出常见的骗术特征，再用大白话告诉您下一步怎么办。
+          </p>
+
+          <ul class="feature-checks">
+            <li>
+              <span class="check-mark"><span data-icon="user"></span></span>
+              <div><strong>看清对方是谁</strong><p>冒充公检法、客服、亲友的常见话术，都有迹可循。</p></div>
+            </li>
+            <li>
+              <span class="check-mark"><span data-icon="alert"></span></span>
+              <div><strong>找出让您紧张的地方</strong><p>催促转账、索要验证码、陌生链接，会被大字标出来。</p></div>
+            </li>
+            <li>
+              <span class="check-mark"><span data-icon="shield-check"></span></span>
+              <div><strong>告诉您下一步怎么办</strong><p>该挂断、该核实，还是该拨打 96110，说得清清楚楚。</p></div>
+            </li>
+          </ul>
+
+          <div class="safety-actions">
+            <a class="btn btn-primary" href="fraud.html">
+              免费识别一条消息
+              <span class="btn-arrow" data-icon="arrow-right"></span>
+            </a>
+            <span class="privacy-inline"><span data-icon="lock"></span>无需登录 · 内容不上传</span>
+          </div>
+        </div>
+
+        <div class="inspect-wrap">
+          <span class="inspect-stamp" aria-hidden="true">先核实<br />再操作</span>
+          <div class="inspect-card">
+            <div class="inspect-top">
+              <span class="inspect-source"><span data-icon="message"></span>收到一条陌生短信</span>
+              <span class="risk-chip risk-high"><span data-icon="alert"></span>高风险</span>
+            </div>
+            <blockquote class="inspect-quote">
+              “您有一笔百万保障即将扣费，请打开链接关闭，否则每月自动扣款 2000 元。”
+            </blockquote>
+            <div class="inspect-scan">
+              <span class="scan-label"><span data-icon="sparkles"></span>AI 发现了这些疑点</span>
+              <span class="scan-line" aria-hidden="true"></span>
+            </div>
+            <div class="inspect-findings">
+              <div class="inspect-finding">
+                <span class="finding-dot danger"><span data-icon="alert-circle"></span></span>
+                <div><strong>制造紧张</strong><p>用“即将扣费”催您马上操作，不给核实时间。</p></div>
+              </div>
+              <div class="inspect-finding">
+                <span class="finding-dot warn"><span data-icon="link"></span></span>
+                <div><strong>引导点击陌生链接</strong><p>真正的平台不会用短信链接让您关闭扣费。</p></div>
+              </div>
+              <div class="inspect-finding">
+                <span class="finding-dot safe"><span data-icon="phone"></span></span>
+                <div><strong>建议先打 96110</strong><p>不要点链接，先通过官方电话或家人核实。</p></div>
+              </div>
+            </div>
+            <div class="inspect-verdict">
+              <span data-icon="shield-check"></span>
+              <p><strong>记住一句话：</strong>让您急着转账、点链接、给验证码的，先停下来。</p>
+            </div>
+          </div>
+          <a class="inspect-more" href="fraud.html">我也有一条消息要看看<span data-icon="arrow-right"></span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 手机课堂 -->
+    <section class="section lessons-section" aria-labelledby="lessonsTitle">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">手机小课堂</p>
+            <h2 class="section-title" id="lessonsTitle">每天学一点，手机也好用一点</h2>
+            <p class="section-desc">每节课只讲一件小事，可以慢慢看，也可以读给您听。</p>
+          </div>
+          <a class="text-link" href="learn.html">去手机课堂<span data-icon="arrow-right"></span></a>
+        </div>
+
+        <div class="lesson-grid">
+          <a class="lesson-card" href="learn.html?lesson=video">
+            <div class="lesson-cover cover-green">
+              <span class="lesson-number">01</span>
+              <span class="cover-pattern" aria-hidden="true"></span>
+              <span class="lesson-cover-icon" data-icon="video"></span>
+              <span class="lesson-label">基础课</span>
+            </div>
+            <div class="lesson-card-body">
+              <div class="lesson-meta">
+                <span><span data-icon="clock"></span>5 分钟</span>
+                <span>入门</span>
+              </div>
+              <h3>视频通话，其实只要三步</h3>
+              <p>从找到按钮，到看见家人的脸。</p>
+              <span class="lesson-start">开始学习<span data-icon="arrow-right"></span></span>
+            </div>
+          </a>
+
+          <a class="lesson-card" href="learn.html?lesson=voice">
+            <div class="lesson-cover cover-gold">
+              <span class="lesson-number">02</span>
+              <span class="cover-pattern" aria-hidden="true"></span>
+              <span class="lesson-cover-icon" data-icon="mic"></span>
+              <span class="lesson-label">基础课</span>
+            </div>
+            <div class="lesson-card-body">
+              <div class="lesson-meta">
+                <span><span data-icon="clock"></span>4 分钟</span>
+                <span>入门</span>
+              </div>
+              <h3>用微信给家人发一条语音</h3>
+              <p>不用打字，按住说话就好。</p>
+              <span class="lesson-start">开始学习<span data-icon="arrow-right"></span></span>
+            </div>
+          </a>
+
+          <a class="lesson-card" href="learn.html?lesson=fake-link">
+            <div class="lesson-cover cover-clay">
+              <span class="lesson-number">03</span>
+              <span class="cover-pattern" aria-hidden="true"></span>
+              <span class="lesson-cover-icon" data-icon="link"></span>
+              <span class="lesson-label">安全课</span>
+            </div>
+            <div class="lesson-card-body">
+              <div class="lesson-meta">
+                <span><span data-icon="clock"></span>6 分钟</span>
+                <span>防骗</span>
+              </div>
+              <h3>收到陌生链接，先别点</h3>
+              <p>三步辨认，不让手指比脑子快。</p>
+              <span class="lesson-start">开始学习<span data-icon="arrow-right"></span></span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 安心说明 -->
+    <section class="section trust-section" aria-labelledby="trustTitle">
+      <div class="container">
+        <div class="trust-panel">
+          <div class="trust-copy">
+            <p class="eyebrow eyebrow-light">安心使用</p>
+            <h2 class="section-title" id="trustTitle">把复杂留给我们，<br />把简单留给您。</h2>
+            <p>没有弹窗广告，也没有绕来绕去的入口。银龄无诈只想把长辈真正用得上的几件事，做得更清楚一点。</p>
+          </div>
+          <div class="trust-grid">
+            <div class="trust-item">
+              <span class="trust-icon" data-icon="lock"></span>
+              <h3>内容不上传</h3>
+              <p>反诈识别在本地完成，聊天内容不会离开您的设备。</p>
+            </div>
+            <div class="trust-item">
+              <span class="trust-icon" data-icon="type"></span>
+              <h3>大字不费眼</h3>
+              <p>字号、对比度都能按习惯调整，设置会自动记住。</p>
+            </div>
+            <div class="trust-item">
+              <span class="trust-icon" data-icon="volume"></span>
+              <h3>不会读也能听</h3>
+              <p>识别结果、办事步骤都可以一键朗读，慢慢听。</p>
+            </div>
+          </div>
+        </div>
+        <p class="home-disclaimer">
+          <span data-icon="info"></span>
+          温馨提示：银龄无诈的识别结果仅供参考，不能替代警方判断。遇到转账、汇款要求，请先联系家人或拨打 96110 核实。
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="银龄无诈首页">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
+              <g stroke="#fff9eb" stroke-width="2.3" stroke-linecap="round">
+                <path d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3"></path>
+              </g>
+              <path d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z" fill="#fff9eb"></path>
+            </svg>
+          </span>
+          <span class="brand-text">
+            <strong>银龄无诈</strong>
+            <small>数字生活，有人帮</small>
+          </span>
+        </a>
+        <p class="footer-tagline">为长辈设计的数字助老平台。大字、慢一点、说清楚，是我们做每一件事的起点。</p>
+      </div>
+      <div>
+        <h3 class="footer-heading">常用入口</h3>
+        <ul class="footer-links">
+          <li><a href="fraud.html">反诈识别</a></li>
+          <li><a href="services.html">便民服务</a></li>
+          <li><a href="learn.html">手机课堂</a></li>
+          <li><a href="profile.html">我的设置</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-heading">紧急电话</h3>
+        <p class="footer-phone"><strong>110</strong><span>报警求助</span></p>
+        <p class="footer-phone"><strong>120</strong><span>急救电话</span></p>
+        <p class="footer-phone"><strong>96110</strong><span>反诈专线</span></p>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>© <span id="footerYear">2026</span> 银龄无诈 · 数字助老</p>
+      <p>识别建议仅供参考，紧急情况请及时报警。</p>
+    </div>
+  </footer>
+</body>
+</html>

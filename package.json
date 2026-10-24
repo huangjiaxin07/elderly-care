@@ -1,0 +1,14 @@
+{
+  "name": "yinling-wuzha",
+  "version": "1.0.0",
+  "private": true,
+  "description": "银龄无诈 · 老年人数字助老 Web 平台（大字体模式 + AI 反诈识别）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.3.5"
+  }
+}
