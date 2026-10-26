@@ -80,6 +80,7 @@ python -m http.server 4173
 │  └─ profile.css
 ├─ js/
 │  ├─ app.js         # 设置、图标、语音、弹窗、Toast、本地存储
+│  ├─ crypto.js      # SM3 + SM2 公钥加密（零依赖，登录时加密密码）
 │  ├─ home.js
 │  ├─ fraud-engine.js
 │  ├─ fraud.js

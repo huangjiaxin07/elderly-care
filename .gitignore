@@ -1,1 +1,15 @@
 node_modules/
+server/.winv/
+__pycache__/
+*.pyc
+
+# 本地配置与数据：里面有真实密钥和演示数据，绝不能进仓库
+server/.env
+server/elder.db
+server/*.db-wal
+server/*.db-shm
+server/test*.db
+
+# 探测脚本与测试产生的临时文件
+*.log
+server/tests/*.mp3

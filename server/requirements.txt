@@ -1,0 +1,9 @@
+# 运行环境：Python 3.14，虚拟环境在 server/.winv
+# 本机没有 pip，以下依赖由虚拟环境自带；换机器时按此安装。
+flask>=3.0
+
+# 不需要额外的加密库：
+#   SM2 / SM3 由 server/sm2.py 纯 Python 实现，无需 gmssl
+#   SM3/SM2 前端实现见 js/crypto.js，无需 npm 包
+# 可选：
+#   argon2-cffi   密码哈希改用 Argon2id（当前用标准库 scrypt）
