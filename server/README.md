@@ -29,9 +29,19 @@ server\.winv\Scripts\python.exe server\app.py
 | `api_elders.py` | `/api/elders` 增删改查 |
 | `api_health.py` | `/api/elders/{id}/health-records` |
 | `api_sos.py` | `/api/elders/{id}/sos`、`/api/sos/{id}` |
+| `api_analyze.py` | `/api/analyze`，SSE 流式输出 |
+| `api_tts.py` | `/api/tts`，语音合成，带进程内缓存 |
+| `analyzer.py` | AI 分析的业务逻辑：Prompt、hint 增量抽取、结果校验、降级 |
+| `ai.py` | SiliconFlow 客户端（纯 urllib）：对话、流式、视觉、embedding、rerank、TTS |
+| `rag.py` | RAG：建库、余弦粗排、reranker 精排、三层降级 |
+| `knowledge.py` | 反诈知识库，27 条（19 类骗术 + 官方渠道） |
+| `ratelimit.py` | 按 IP 的滑动窗口限流 |
 | `tests/e2e_test.py` | 端到端冒烟测试，55 条断言（含 SM2 登录与重放） |
-| `.env` | 本地配置（演示密钥、短信开关） |
+| `tests/analyze_test.py` | AI 链路离线测试，22 条断言，用假 SiliconFlow 服务，不联网 |
+| `tests/siliconflow_probe*.py` | 探测真实 SiliconFlow 接口行为的脚本 |
+| `.env` | 本地配置（演示密钥、短信开关、AI Key） |
 | `ALIYUN-SMS.md` | 阿里云短信开通与接入步骤 |
+| `AI.md` | **AI 模块设计说明**：选型实测数据、Prompt 设计、RAG、降级、评分点对应 |
 | `FRONTEND-API.md` | **给前端的对接文档**：复制即用的 fetch 封装 + 每个接口的调用示例 |
 
 ## 配置
@@ -50,6 +60,13 @@ server\.winv\Scripts\python.exe server\app.py
 | `PASSWORD_MODE` | `auto` | `auto` / `plain` / `sm2` |
 | `SM2_PRIVATE_KEY` | 演示密钥 | 与 `js/crypto.js` 的公钥配对 |
 | `ALIYUN_*` | 空 | 见 [`ALIYUN-SMS.md`](ALIYUN-SMS.md) |
+| `SILICONFLOW_API_KEY` | 空 | **填了才启用 AI 分析**；不填时 `/api/analyze` 返回 1017 |
+| `AI_MODEL` | `DeepSeek-V3.2` | 主分析模型，选型依据见 [`AI.md`](AI.md) |
+| `AI_VL_MODEL` | `Qwen3-VL-8B` | 截图理解 |
+| `AI_EMBED_MODEL` / `AI_RERANK_MODEL` | `bge-m3` / `bge-reranker-v2-m3` | RAG 检索与重排 |
+| `RAG_ENABLED` / `RAG_TOP_K` | `1` / `4` | 检索开关与召回条数 |
+| `ANALYZE_PER_IP_PER_MIN` | `6` | 分析接口按 IP 限流 |
+| `TTS_PER_IP_PER_MIN` / `TTS_MAX_TEXT` | `10` / `500` | 朗读接口限流与单次字数上限 |
 | `SSL_CERT` / `SSL_KEY` | 空 | 两个都存在才启用 HTTPS |
 
 ## 前端怎么加密
@@ -95,6 +112,28 @@ server\.winv\Scripts\python.exe server\sm2.py keygen
 要真的发短信，按 [`ALIYUN-SMS.md`](ALIYUN-SMS.md) 开通后把 `.env` 改成 `SMS_PROVIDER=aliyun`。
 发送失败会返回 1099，并把那条验证码删掉，不会出现「库里有效、用户收不到」。
 
+## AI 分析
+
+在 `.env` 里填 `SILICONFLOW_API_KEY` 后，`POST /api/analyze` 就会走真实大模型；
+不填时该接口直接返回 1017，前端自动回退到本地规则引擎——**没有 Key 也能跑完整个项目**。
+
+```bash
+curl -N -X POST http://127.0.0.1:14087/api/analyze \
+  -H 'Content-Type: application/json' \
+  -d '{"text":"您的快递丢失，请点击链接填写银行卡和验证码"}'
+```
+
+`-N` 关掉 curl 的缓冲，能看到逐条 SSE 事件：`start → context → hint × N → result → done`。
+
+- 选型依据、Prompt 设计、RAG 结构、降级策略：[`AI.md`](AI.md)
+- 前端怎么接（含完整切帧代码）：[`FRONTEND-API.md`](FRONTEND-API.md) 第九节
+- 接口契约：[`server.md`](server.md) 第 6 节
+
+语音朗读走 `POST /api/tts`（见 [`server.md`](server.md) 第 7 节），返回 mp3 二进制，
+带进程内缓存，同一段文字不会重复计费。同样在没有 Key 时返回 1017，前端继续用浏览器朗读。
+
+知识库在 `knowledge.py`，27 条，第一次调用时自动建索引（一次 embedding 请求），之后走本地 SQLite。
+
 ## 联调步骤
 
 ```bash
@@ -132,6 +171,20 @@ server\.winv\Scripts\python.exe server\tests\e2e_test.py
 SM2 密文重放拦截、错 5 次锁定、老人档案 CRUD 与越权、健康记录取值校验与软删除、
 求助防连按与状态机。
 
+AI 链路另有一套**完全离线**的测试，不需要 Key 也不联网——它起一个假的 SiliconFlow 服务，
+验证 SSE 帧格式、hint 跨 chunk 拼接、JSON 容错、限流和降级：
+
+```powershell
+server\.winv\Scripts\python.exe server\tests\analyze_test.py
+```
+
+想验证真实接口行为（会花几厘钱），用探测脚本：
+
+```powershell
+$env:SILICONFLOW_API_KEY = "sk-..."
+server\.winv\Scripts\python.exe server\tests\siliconflow_probe.py
+```
+
 ## 与文档的差异（必须知道）
 
 1. **密码哈希用 scrypt，不是 Argon2id**：同样是内存硬型 KDF、同样不可逆；
@@ -142,11 +195,13 @@ SM2 密文重放拦截、错 5 次锁定、老人档案 CRUD 与越权、健康�
 5. 密码错误 5 次锁定 15 分钟，阈值写在 `config.py`（文档只给了 1006，没给次数）。
 6. `.env` 里的 SM2 私钥是**演示密钥**，与 `js/crypto.js` 的公钥配对，提交在仓库里。
    正式使用必须重新生成，并且把 `.env` 加进 `.gitignore`。
+7. **AI 只做单轮「检索 + 判断」**，没有 Agent 多步工具调用，也没接 MCP。
+   语音识别受限于 SiliconFlow 不收音频，仍留在浏览器端。
 
 ## 数据库
 
-`elder.db` 里 9 张表：`USERS`、`VERIFY_CODE`、`SESSION`、`ELDERS`、`HEALTH_RECORD`、
-`SOS`、`CIPHER_SEEN`、`ERR_TRACE`。
+`elder.db` 里 10 张表：`USERS`、`VERIFY_CODE`、`SESSION`、`ELDERS`、`HEALTH_RECORD`、
+`SOS`、`CIPHER_SEEN`、`KNOWLEDGE`、`ERR_TRACE`、`sqlite_sequence`。
 
 - 旧版 `app.py` 的 `VERIFY_CODE` 缺验证码字段，首次启动会自动重建（该表原本为空）；
 - `ERR_TRACE` 保留了原有记录，只追加了 `PATH` / `METHOD` / `IP` / `STATUS` / `CREATED_AT` 列；

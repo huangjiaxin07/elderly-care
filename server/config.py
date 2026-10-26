@@ -115,6 +115,35 @@ class Config:
     ALIYUN_SMS_TEMPLATE_PARAM = os.getenv("ALIYUN_SMS_TEMPLATE_PARAM", "code")
     ALIYUN_SMS_REGION = os.getenv("ALIYUN_SMS_REGION", "cn-hangzhou")
 
+    # ---- AI（SiliconFlow）----
+    SILICONFLOW_BASE = os.getenv("SILICONFLOW_BASE", "https://api.siliconflow.cn/v1")
+    SILICONFLOW_API_KEY = os.getenv("SILICONFLOW_API_KEY", "").strip()
+    AI_ENABLED = bool(SILICONFLOW_API_KEY)
+
+    # 实测结论：DeepSeek-V3.2 在这个任务上比 Qwen3.5 系列快 2-3 倍，
+    # 输出也更短（150 tok vs 1300+ tok），所以做主力分析模型。
+    AI_MODEL = os.getenv("AI_MODEL", "deepseek-ai/DeepSeek-V3.2")
+    AI_VL_MODEL = os.getenv("AI_VL_MODEL", "Qwen/Qwen3-VL-8B-Instruct")
+    AI_EMBED_MODEL = os.getenv("AI_EMBED_MODEL", "Pro/BAAI/bge-m3")
+    AI_RERANK_MODEL = os.getenv("AI_RERANK_MODEL", "Pro/BAAI/bge-reranker-v2-m3")
+    AI_TTS_MODEL = os.getenv("AI_TTS_MODEL", "FunAudioLLM/CosyVoice2-0.5B")
+    AI_TTS_VOICE = os.getenv("AI_TTS_VOICE", "FunAudioLLM/CosyVoice2-0.5B:alex")
+    AI_TIMEOUT = _int("AI_TIMEOUT", 60)
+    AI_MAX_TOKENS = _int("AI_MAX_TOKENS", 260)
+
+    # ---- RAG ----
+    RAG_ENABLED = _bool("RAG_ENABLED", True)
+    RAG_TOP_K = _int("RAG_TOP_K", 4)
+
+    # ---- 分析接口限制 ----
+    ANALYZE_PER_IP_PER_MIN = _int("ANALYZE_PER_IP_PER_MIN", 6)
+    ANALYZE_MAX_TEXT = _int("ANALYZE_MAX_TEXT", 2000)
+
+    # ---- 语音合成 ----
+    TTS_MAX_TEXT = _int("TTS_MAX_TEXT", 500)
+    TTS_PER_IP_PER_MIN = _int("TTS_PER_IP_PER_MIN", 10)
+    TTS_CACHE_SIZE = _int("TTS_CACHE_SIZE", 64)
+
     # ---- HTTPS（仅当证书存在时启用）----
     SSL_CERT = os.getenv("SSL_CERT", "")
     SSL_KEY = os.getenv("SSL_KEY", "")

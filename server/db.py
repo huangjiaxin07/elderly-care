@@ -104,6 +104,15 @@ SCHEMA = [
         SEEN_AT INTEGER NOT NULL
     )
     """,
+    """
+    CREATE TABLE IF NOT EXISTS KNOWLEDGE (
+        ID         TEXT    PRIMARY KEY,
+        TITLE      TEXT    NOT NULL,
+        CONTENT    TEXT    NOT NULL,
+        VECTOR     TEXT    NOT NULL,
+        UPDATED_AT INTEGER NOT NULL
+    )
+    """,
 ]
 
 # 失败请求的追踪表。沿用 app.py 原来的表名与列，只做追加，不破坏已有数据。

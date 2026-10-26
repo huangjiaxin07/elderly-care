@@ -83,6 +83,8 @@ async function api(path, method = "GET", body) {
 | 求助记录列表 | GET | `/api/elders/{id}/sos` | 是 |
 | 发起求助 | POST | `/api/elders/{id}/sos` | 是 |
 | 标记已处理 | PATCH | `/api/sos/{求助id}` | 是 |
+| **AI 反诈分析** | POST | `/api/analyze` | 否（流式，见第九节） |
+| **语音朗读** | POST | `/api/tts` | 否（返回 mp3，见第十节） |
 
 返回格式全部长这样：
 
@@ -341,7 +343,229 @@ await api(`/api/sos/${sosId}`, "PATCH", { state: "acknowledged" });
 
 ---
 
-## 九、错误码对照（用来决定怎么提示）
+## 九、AI 反诈分析（流式）
+
+这是全站最重要的接口：把用户粘贴的短信、或上传的截图，交给后端的大模型判断，
+结论**边生成边推**过来，老人不用干等。
+
+### 1. 为什么不能用 EventSource
+
+`EventSource` 只支持 GET、不能发请求体，也带不了自定义请求头。
+**必须用 `fetch` + `ReadableStream` 手动切帧。**
+
+服务端返回的是标准 SSE：每一帧是 `data: <JSON>\n\n`，没有 `event:` 字段，按 `type` 分派。
+
+### 2. 事件顺序
+
+```
+start → context → hint（可能多次）→ result → done
+```
+
+| type | 你该做什么 |
+| --- | --- |
+| `start` | 把按钮变成「分析中…」 |
+| `context` | 可选：显示「已匹配 3 条相似骗术」 |
+| `hint` | **把 `text` 追加到气泡里**，逐字显示 |
+| `result` | 用 `detail` 渲染风险卡片 |
+| `done` | 关闭 loading |
+| `fallback` | 后端失败，**改用本地 `FraudEngine.analyze`** |
+
+### 3. 完整代码（复制即用）
+
+```js
+async function analyzeText(text, onHint) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25000);  // 整体 25 秒上限
+
+  let response;
+  try {
+    response = await fetch(API_BASE + "/api/analyze", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+      signal: controller.signal,
+    });
+  } catch (error) {
+    clearTimeout(timeout);
+    return { ok: false, reason: "network" };
+  }
+
+  if (!response.ok) {
+    clearTimeout(timeout);
+    const data = await response.json().catch(() => ({}));
+    return { ok: false, status: data.status, msg: data.msg };
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let result = null;
+  let fellBack = false;
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    let cut;
+    while ((cut = buffer.indexOf("\n\n")) >= 0) {
+      const frame = buffer.slice(0, cut).trim();
+      buffer = buffer.slice(cut + 2);
+      if (!frame.startsWith("data:")) continue;
+
+      let event;
+      try {
+        event = JSON.parse(frame.slice(5).trim());
+      } catch (error) {
+        continue;
+      }
+
+      if (event.type === "hint") onHint(event.text);
+      else if (event.type === "result") result = event.detail;
+      else if (event.type === "fallback") fellBack = true;
+    }
+  }
+
+  clearTimeout(timeout);
+  return { ok: true, result, fellBack };
+}
+```
+
+### 4. 降级：一定要接本地规则引擎
+
+`fallback`、超时、网络失败，都必须回退到现有的 `js/fraud-engine.js`：
+
+```js
+const outcome = await analyzeText(text, (piece) => {
+  bubble.append(piece);           // 逐字追加
+});
+
+if (!outcome.ok || outcome.fellBack || !outcome.result) {
+  const local = FraudEngine.analyze(text);   // 前端已有的 19 条规则
+  renderResult({
+    hint: local.summary,
+    level: local.level,
+    score: local.score,
+    reasons: local.findings.map((item) => item.title),
+    advice: local.actions[0] || "拿不准时打 96110 核实。",
+  });
+  showToast("AI 分析暂不可用，已用本地规则判断");
+} else {
+  renderResult(outcome.result);
+}
+```
+
+`result.detail` 的结构：
+
+```json
+{
+  "hint": "这是典型快递理赔诈骗，链接是假域名。",
+  "level": "high",
+  "score": 92,
+  "reasons": ["假域名", "索要验证码"],
+  "advice": "别点链接，打 96110 核实。"
+}
+```
+
+`level` 只会是 `high` / `medium` / `low` / `none`，`score` 一定是 0–100 的整数，
+**后端已经补齐了所有默认值，前端不用做空值判断。**
+
+### 5. 截图分析
+
+图片走同一个接口，把 `text` 换成 `image`（**纯 base64，不要带 `data:image/...` 前缀**）：
+
+```js
+function fileToBase64(file, maxSide = 1440) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    const url = URL.createObjectURL(file);
+    image.onload = () => {
+      const scale = Math.min(1, maxSide / Math.max(image.width, image.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(image.width * scale);
+      canvas.height = Math.round(image.height * scale);
+      canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);   // 压缩，控制在 2MB 内
+      URL.revokeObjectURL(url);
+      resolve(dataUrl.split(",")[1]);                         // 去掉前缀
+    };
+    image.onerror = reject;
+    image.src = url;
+  });
+}
+
+const base64 = await fileToBase64(file);
+const response = await fetch(API_BASE + "/api/analyze", {
+  method: "POST",
+  credentials: "include",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ image: base64 }),
+});
+```
+
+图片路径**没有逐字效果**：视觉模型一次返回完整结果，`hint` 会一次性到达，
+所以这时候不要做打字机动画，直接显示就行。
+
+### 6. 三个注意点
+
+1. **`text` 和 `image` 不能同时传**，会返回 `1001`。
+2. **按 IP 限流每分钟 6 次**，超出返回 `1016`（429）。按钮要防连点，不要用轮询。
+3. **不需要登录**，但带上 Cookie 也没问题——接口不校验会话。
+
+---
+
+## 十、语音朗读（TTS）
+
+现在「朗读」用的是浏览器自带的 `speechSynthesis`，问题是在老人手机上经常只有机械音，
+有些安卓机干脆没有中文语音。这个接口换成服务端合成，音色自然得多。
+
+**成功时返回的是 mp3 二进制，不是 JSON。** 这是全站唯一的例外。
+
+```js
+let audioUrl = null;
+
+async function speak(text) {
+  const response = await fetch(API_BASE + "/api/tts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, speed: 0.9 }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();       // 失败才是 JSON
+    throw new Error(error.msg);
+  }
+
+  const blob = await response.blob();
+  if (audioUrl) URL.revokeObjectURL(audioUrl);  // 释放上一条
+  audioUrl = URL.createObjectURL(blob);
+  await new Audio(audioUrl).play();
+}
+```
+
+### 一定要保留浏览器朗读作为降级
+
+接口不可用（`1017`、断网、超时）时，仍然用原来的 `speechSynthesis`，
+否则「点了没反应」在老人场景里是很严重的体验问题：
+
+```js
+try {
+  await speak(text);
+} catch (error) {
+  NY.speakText(text);        // app.js 里已有的浏览器朗读
+}
+```
+
+### 三个细节
+
+1. **`text` 最多 500 字**，识别结果很长时先截断再朗读。
+2. **同一段文字结果稳定**，服务端有缓存，浏览器也能缓存一天，重复点不会重复计费。
+3. **`speed` 建议 0.85–0.95**，老人听着更清楚；不传用服务端默认。
+
+---
+
+## 十一、错误码对照（用来决定怎么提示）
 
 | status | 含义 | 前端建议 |
 | --- | --- | --- |
@@ -361,13 +585,15 @@ await api(`/api/sos/${sosId}`, "PATCH", { state: "acknowledged" });
 | `1012` | 健康记录不存在 | 刷新列表 |
 | `1013` | 求助记录不存在 | 刷新列表 |
 | `1014` | 接口不存在 | 检查路径拼写 |
+| `1016` | AI 分析请求太频繁 | 提示稍后再试，按钮倒计时 |
+| `1017` | AI 服务未配置 | **直接用本地规则引擎**，不要提示用户报错 |
 | `1099` | 服务器内部错误 | 提示稍后再试 |
 
 多数情况下 `msg` 已经是能直接给用户看的中文，直接用即可。
 
 ---
 
-## 十、五个一定会踩的坑
+## 十二、五个一定会踩的坑
 
 1. **忘了 `credentials: "include"`** → 登录成功但下一个请求还是 1007。
 2. **`localhost` 和 `127.0.0.1` 混用** → Cookie 静默丢失，且不报错。前后端统一用一个。
@@ -377,14 +603,17 @@ await api(`/api/sos/${sosId}`, "PATCH", { state: "acknowledged" });
 
 ---
 
-## 十一、页面接入建议
+## 十三、页面接入建议
 
 | 页面 | 要接的接口 |
 | --- | --- |
 | 新增 `login.html` | 验证码、注册、登录 |
 | `profile.html` | 老人档案增删改查；亲情联系人可以用 `emergency_phone` |
 | `index.html` | 老人列表、一键求助 |
-| `fraud.html` / `services.html` / `learn.html` | 暂时不用接，保持本地逻辑 |
+| **`fraud.html`** | **接 `/api/analyze`（第九节），保留 `fraud-engine.js` 作降级** |
+| `services.html` / `learn.html` | 暂时不用接，保持本地逻辑 |
 
-接入顺序建议：先把 `login.html` 跑通（能看到 `status: 0`），再接档案，最后接健康记录和求助。
+接入顺序建议：先把 `login.html` 跑通（能看到 `status: 0`），接档案，再接健康记录和求助，
+最后接 `fraud.html` 的 AI 分析——它依赖前面所有基础，放最后风险最小。
+
 每接一个接口，先 `console.log` 打印完整返回，再写界面。

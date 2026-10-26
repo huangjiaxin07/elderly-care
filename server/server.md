@@ -63,6 +63,8 @@ HTTP 状态码单独使用：成功 200，参数错误 400，未登录 401，无
 | 1013 | 404 | 求助记录不存在 |
 | 1014 | 404 | 接口不存在（路径写错或已废弃） |
 | 1015 | 405 | 请求方法不允许（如用 GET 调 PATCH 接口） |
+| 1016 | 429 | 请求过于频繁（AI 分析接口按 IP 限流） |
+| 1017 | 503 | AI 分析服务未配置或不可用（前端应回退本地规则引擎） |
 | 1099 | 500 | 服务器内部错误（未预期的异常，详情只进日志） |
 
 ### 会话
@@ -460,6 +462,126 @@ HTTP 状态码单独使用：成功 200，参数错误 400，未登录 401，无
 - 本接口**只落库并返回应通知的号码，不接入短信、电话外呼或推送通道**。真正的通知能力属于待定事项，实现方不要自行接入第三方短信服务。
 - 因此前端必须在求助请求失败或超时（建议 3 秒）时，直接调起本地拨号 `tel:110` / `tel:120`，不能把「求助成功」的提示建立在接口返回之上。
 - 求助接口依赖有效登录会话。老人本人若没有账号，无法发起——这是已知的产品缺口，见待定事项。
+
+## 6. AI 反诈分析（流式）
+
+**接口：`POST /api/analyze`**，返回 `text/event-stream`。
+
+这是本项目唯一调用大模型的接口。前端把用户粘贴的短信、聊天记录，或者短信截图发给后端，
+后端做「RAG 检索 + 大模型判断」，把结论**边生成边推**给前端。
+
+### 6.1 请求
+
+| 字段 | 类型 | 示例 | 描述 | 必填 |
+| --- | --- | --- | --- | --- |
+| text | Text | 您的快递丢失，请点击链接… | 待判断的文本，6–2000 字 | 二选一 |
+| image | Text | /9j/4AAQSk… | 图片的 base64（不带 `data:` 前缀），原图 ≤ 2MB | 二选一 |
+
+`text` 与 `image` 必须**恰好提供一个**，同时传或都不传返回 1001。
+
+### 6.2 响应：SSE 事件序列
+
+响应是 `text/event-stream`，每一帧格式固定为 `data: <JSON>\n\n`，**没有 `event:` 字段**，
+前端按 `type` 分派即可。事件按下表顺序出现：
+
+| type | 时机 | 载荷 | 前端怎么用 |
+| --- | --- | --- | --- |
+| `start` | 立即 | `trace_id`、`model`、`input` | 显示「正在分析…」 |
+| `context` | RAG 检索完（约 0.6s） | `rag`（命中的知识库 id 数组）、`elapsed_ms` | 可显示「已匹配 3 条相似骗术」 |
+| `hint` | 随生成增量，可能多次 | `text`（本次新增的一段） | **追加到气泡里逐字显示** |
+| `result` | 生成结束 | `source`、`rag`、`detail`、`elapsed_ms` | 用 `detail` 渲染风险卡片 |
+| `done` | 最后一条 | `elapsed_ms` | 结束 loading，关闭连接 |
+
+`result` 里的 `detail` 结构：
+
+```json
+{
+  "hint": "这是典型快递理赔诈骗，链接是假域名。",
+  "level": "high",
+  "score": 92,
+  "reasons": ["假域名", "索要验证码", "要求点击链接"],
+  "advice": "别点链接，打 96110 核实。"
+}
+```
+
+`level` 只可能是 `high` / `medium` / `low` / `none`；`score` 是 0–100 的整数；
+`reasons` 2–4 条；`advice` 一句话。字段缺失或格式非法时服务端会补齐默认值，前端不必做空值判断。
+
+### 6.3 降级事件
+
+大模型超时、网络失败、返回的 JSON 解析不了，都会发一个 `fallback` 事件然后 `done`：
+
+```json
+{"type": "fallback", "reason": "ai_error", "detail": "SiliconFlow 请求超时", "elapsed_ms": 8000}
+```
+
+`reason` 取值：`ai_error`（上游失败）、`bad_json`（模型没按格式返回）、`internal`（服务端异常）。
+
+**收到 `fallback` 时，前端必须改用本地规则引擎**（`js/fraud-engine.js` 的 `FraudEngine.analyze`）
+给出结果，并提示「AI 分析暂不可用，已用本地规则判断」。后端不复制规则引擎，降级只在前端做。
+
+### 6.4 其他约束
+
+- **不需要登录**：反诈识别页是公开页面。按 IP 限流，默认每分钟 6 次，超出返回 1016。
+- **图片路径没有增量**：视觉模型一次返回完整 JSON，服务端会一次性发 `hint` 再发 `result`。
+- **接口未配置时**（服务端没有 API Key）直接返回 1017 与普通 JSON，不进入 SSE。
+- **超时**：服务端对上游设 60 秒超时；前端建议自己在 15 秒没有新帧时断开并降级。
+- **`X-Accel-Buffering: no`** 已由服务端返回，nginx 侧仍需 `proxy_buffering off;`，否则会整段缓存。
+
+## 7. 语音合成
+
+**接口：`POST /api/tts`**，成功时返回 `audio/mpeg` 二进制，失败时返回常规 JSON 信封。
+
+这是全站唯一一个「成功返回的不是 JSON」的接口，因为音频没法塞进信封，也没必要。
+
+### 7.1 请求
+
+| 字段 | 类型 | 示例 | 描述 | 必填 |
+| --- | --- | --- | --- | --- |
+| text | Text | 这条短信很像快递理赔诈骗… | 要朗读的文字，1–500 字 | 是 |
+| voice | Text | FunAudioLLM/CosyVoice2-0.5B:alex | 音色，不传用服务端默认 | 否 |
+| speed | Float | 0.9 | 语速，0.5–2.0，不传用默认 | 否 |
+
+### 7.2 响应
+
+**成功**：HTTP 200，`Content-Type: audio/mpeg`，body 是 mp3 字节流。
+
+| 响应头 | 说明 |
+| --- | --- |
+| `Cache-Control: public, max-age=86400` | 同一段文字结果稳定，浏览器可以缓存一天 |
+| `X-TTS-Cache: hit \| miss` | 是否命中服务端缓存，仅用于排查 |
+
+服务端对「文字 + 音色 + 语速」做了进程内缓存（默认 64 条），命中时不产生任何 API 调用。
+识别结果里的固定建议语会反复朗读，命中率很高。
+
+**失败**：HTTP 4xx/5xx，返回常规 JSON 信封 `{status, msg, trace_id}`。
+
+| status | 触发条件 |
+| --- | --- |
+| 1001 | `text` 为空或超过 500 字、`speed` 越界 |
+| 1016 | 同一 IP 每分钟超过 10 次 |
+| 1017 | 服务端没有配置 API Key |
+| 1099 | 上游语音服务失败 |
+
+### 7.3 前端用法
+
+不要用 `fetch` 读文本，要读成 blob 再播放：
+
+```js
+const response = await fetch(API_BASE + "/api/tts", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ text: "拿不准时先问家人，或拨打 96110 核实。" }),
+});
+if (!response.ok) {
+  const error = await response.json();      // 失败才是 JSON
+  throw new Error(error.msg);
+}
+const url = URL.createObjectURL(await response.blob());
+new Audio(url).play();
+```
+
+不需要登录。建议保留浏览器 `speechSynthesis` 作为降级——接口不可用时仍然能读。
 
 ## 待定事项（本期不实现，实现方不要自行设计）
 

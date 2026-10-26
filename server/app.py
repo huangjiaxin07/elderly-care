@@ -22,10 +22,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
+import api_analyze
 import api_auth
 import api_elders
 import api_health
 import api_sos
+import api_tts
 import config
 import db
 from responses import ApiError, record_error_trace, respond
@@ -48,6 +50,8 @@ def create_app():
     app.register_blueprint(api_elders.bp)
     app.register_blueprint(api_health.bp)
     app.register_blueprint(api_sos.bp)
+    app.register_blueprint(api_analyze.bp)
+    app.register_blueprint(api_tts.bp)
 
     # ------------------------------------------------------------ 请求钩子
 
