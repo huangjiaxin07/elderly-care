@@ -1,1 +1,6 @@
 node_modules/
+server/.winv/
+__pycache__/
+*.pyc
+server/*.db-wal
+server/*.db-shm
