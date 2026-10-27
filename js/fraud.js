@@ -1,13 +1,10 @@
 /* =========================================================
    AI 反诈识别页
    ========================================================= */
-
 (function () {
   "use strict";
-
   const NY = window.YinLing;
   const HISTORY_KEY = "yinling.fraudHistory.v1";
-
   const SAMPLES = {
     package:
       "【快递客服】您好，您的快递在运输中丢失，我们将为您办理双倍理赔。请点击 http://kf-claim.top/verify 填写银行卡号和短信验证码，客服会尽快处理。今日内有效，超时无法理赔。",
@@ -22,14 +19,12 @@
     safe:
       "张老师您好，明天上午九点社区活动中心有一场健康讲座，讲怎么科学控制血压。您有空就来，不用带东西，也不收费。",
   };
-
   const RISK_ICONS = {
     high: "alert",
     medium: "alert-circle",
     low: "info",
     none: "shield-check",
   };
-
   const TYPE_LABELS = {
     link: "可疑网址",
     authority: "冒充机关",
@@ -52,7 +47,6 @@
     threat: "言语威胁",
     "ai-face": "AI 换脸",
   };
-
   let currentResult = null;
   let analyzing = false;
   let speechRecognition = null;
@@ -61,17 +55,46 @@
   let clearHistoryArmed = false;
   let clearHistoryTimer = null;
 
+  function adaptAiResult(ai, text) {
+    const levelMap = {
+      high: "高度可疑",
+      medium: "值得留意",
+      low: "轻微异常",
+      none: "暂未见明显风险"
+    };
+    // AI返回 reasons[] → 前端 findings[]
+    const findings = (ai.reasons || []).map(reason => ({
+      title: reason,
+      icon: "alert",
+      severity: ai.level,
+      explain: "",
+      evidence: []
+    }));
+
+    return {
+      headline: ai.hint,
+      summary: ai.hint,
+      level: ai.level,
+      label: levelMap[ai.level] ?? "未知风险",
+      score: ai.score,
+      findings: findings,
+      actions: ai.advice || [],
+      text: text,
+      highlights: [],
+      mantra: "凡是要求转账的，先挂断再核实。"
+    };
+  }
+  // ====================================================================
+
   function $(selector) {
     return document.querySelector(selector);
   }
-
   function updateCharCount() {
     const input = $("#messageInput");
     const count = $("#charCount");
     if (!input || !count) return;
     count.textContent = `${input.value.length} / 4000 字`;
   }
-
   function setInputError(message) {
     const error = $("#inputError");
     if (!error) return;
@@ -83,7 +106,6 @@
       error.textContent = "";
     }
   }
-
   function setAnalyzing(value) {
     analyzing = value;
     const button = $("#analyzeBtn");
@@ -97,49 +119,53 @@
     if (small) small.textContent = value ? "请稍等几秒钟" : "大约需要几秒钟";
   }
 
-  function analyzeNow() {
+  // =====================【异步 + 真实流式请求 + 打点动画】=====================
+  async function analyzeNow() {
     const input = $("#messageInput");
     if (!input) return;
     const text = input.value.trim();
-
     if (text.length < 6) {
       setInputError("再多写一点吧，至少需要 6 个字才能判断。");
       input.focus();
       NY.showToast("内容太短了，请再多粘贴一点。", "warm");
       return;
     }
-
     setInputError("");
     setAnalyzing(true);
     const status = $("#analysisStatus");
-    if (status) status.textContent = "正在分析内容，请稍候。";
+    const streamDom = $("#streamResult");
+    if (status) status.textContent = "正在请求AI分析，请稍候…";
+    if (streamDom) streamDom.textContent = "";
 
-    const stages = ["正在看内容…", "正在核对常见骗术…", "正在整理下一步建议…"];
-    let stageIndex = 0;
-    const copy = $("#analyzeBtn strong");
-    const timer = window.setInterval(() => {
-      stageIndex = Math.min(stageIndex + 1, stages.length - 1);
-      if (copy) copy.textContent = stages[stageIndex];
-    }, 380);
+    let dotTimer = null;
+    try {
+      // 加载打点动画：. . . .
+      dotTimer = setInterval(() => {
+        if (streamDom) streamDom.innerText += ".";
+      }, 300);
 
-    window.setTimeout(() => {
-      window.clearInterval(timer);
-      let result;
-      try {
-        result = window.FraudEngine.analyze(text);
-      } catch (error) {
-        setAnalyzing(false);
-        NY.showToast("识别时出了一点小问题，请再试一次。", "error");
-        return;
+      const res = await fetch("/api/detect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: text })
+      });
+      if (!res.ok) throw new Error("后端接口异常");
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder("utf‑8");
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        // 收到分片立刻关掉打点
+        clearInterval(dotTimer);
+        dotTimer = null;
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+        if (streamDom) streamDom.innerText = buffer;
       }
-
-      setAnalyzing(false);
-
-      if (!result || !result.valid) {
-        setInputError((result && result.reason) || "内容太短，无法判断。");
-        input.focus();
-        return;
-      }
+      const aiRaw = JSON.parse(buffer);
+      const result = adaptAiResult(aiRaw, text);
 
       currentResult = result;
       renderResult(result);
@@ -149,6 +175,7 @@
       if (status) {
         status.textContent = `识别完成，结果是${result.label}，风险评分 ${result.score} 分。`;
       }
+      if (streamDom) streamDom.textContent = "";
 
       const section = $("#resultSection");
       if (section) {
@@ -162,44 +189,50 @@
           });
         }, 60);
       }
-
       if (NY.getSettings().autoRead) {
         window.setTimeout(() => NY.speakText(buildSpeechText(result)), 800);
       }
-    }, 950);
+    } catch (err) {
+      console.error(err);
+      NY.showToast("识别时出了一点小问题，请再试一次。", "error");
+    } finally {
+      // 无论成功失败，清除打点定时器，恢复按钮
+      if (dotTimer) clearInterval(dotTimer);
+      if (streamDom) streamDom.textContent = "";
+      setAnalyzing(false);
+    }
   }
+  // =============================================================================
 
   function renderResult(result) {
     const card = $("#resultCard");
     if (!card) return;
-
     const findingCount = result.findings.length;
     const severityText = {
       high: "高度可疑",
       medium: "值得留意",
       low: "轻微异常",
     };
-
     const findingsHtml = result.findings.length
       ? result.findings
-          .map((finding) => {
-            const evidence = finding.evidence && finding.evidence.length
-              ? `<div class="finding-evidence"><span>原文涉及</span>${finding.evidence
-                  .map((item) => `<mark>${NY.escapeHTML(item)}</mark>`)
-                  .join("")}</div>`
+        .map((finding) => {
+          const evidence = finding.evidence && finding.evidence.length
+            ? `<div class="finding-evidence"><span>原文涉及</span>${finding.evidence
+              .map((item) => `<mark>${NY.escapeHTML(item)}</mark>`)
+              .join("")}</div>`
+            : "";
+          const linksHtml =
+            finding.links && finding.links.length
+              ? `<div class="finding-links">${finding.links
+                .map(
+                  (link) =>
+                    `<span class="finding-link"><span data-icon="link"></span><span>${NY.escapeHTML(
+                      link.host
+                    )}</span><small>${NY.escapeHTML(link.issues[0] || "")}</small></span>`
+                )
+                .join("")}</div>`
               : "";
-            const linksHtml =
-              finding.links && finding.links.length
-                ? `<div class="finding-links">${finding.links
-                    .map(
-                      (link) =>
-                        `<span class="finding-link"><span data-icon="link"></span><span>${NY.escapeHTML(
-                          link.host
-                        )}</span><small>${NY.escapeHTML(link.issues[0] || "")}</small></span>`
-                    )
-                    .join("")}</div>`
-                : "";
-            return `
+          return `
               <article class="finding-card finding-${finding.severity}">
                 <span class="finding-card-icon"><span data-icon="${finding.icon || "alert"}"></span></span>
                 <div class="finding-card-content">
@@ -212,8 +245,8 @@
                   ${linksHtml}
                 </div>
               </article>`;
-          })
-          .join("")
+        })
+        .join("")
       : `
         <div class="safe-finding-panel">
           <span class="safe-finding-icon"><span data-icon="shield-check"></span></span>
@@ -227,18 +260,15 @@
             <li><span data-icon="check"></span>没有索要验证码、密码或屏幕共享</li>
           </ul>
         </div>`;
-
     const actionsHtml = result.actions
       .map(
         (action, index) =>
           `<li><span class="action-number">${index + 1}</span><p>${NY.escapeHTML(action)}</p></li>`
       )
       .join("");
-
     const marked = buildMarkedHTML(result.text, result.highlights);
     const hasHighlights = result.highlights && result.highlights.length > 0;
     const openAttribute = result.level === "high" ? " open" : "";
-
     card.innerHTML = `
       <div class="result-summary risk-${result.level}" style="--score:${result.score}">
         <div class="result-gauge" role="img" aria-label="风险评分 ${result.score} 分，满分 100 分，${result.label}">
@@ -269,12 +299,10 @@
           </div>
         </div>
       </div>
-
       <div class="result-mantra">
         <span class="result-mantra-icon"><span data-icon="shield-check"></span></span>
         <p><span>记住一句话</span><strong>${NY.escapeHTML(result.mantra)}</strong></p>
       </div>
-
       <div class="result-columns">
         <aside class="actions-column">
           <div class="actions-panel">
@@ -293,7 +321,6 @@
             <p class="actions-note"><span data-icon="info"></span>如果已经转账，请立即拨打 110 报警，并联系银行止付。</p>
           </div>
         </aside>
-
         <div class="findings-column">
           <div class="findings-panel">
             <div class="findings-head">
@@ -305,7 +332,6 @@
             </div>
             <div class="findings-list">${findingsHtml}</div>
           </div>
-
           <details class="source-review"${openAttribute}>
             <summary>
               <span class="source-review-title"><span data-icon="message"></span>${hasHighlights ? "原文里这些话要当心" : "再看一眼原文"}</span>
@@ -313,31 +339,26 @@
             </summary>
             <div class="source-review-body">
               <p class="marked-text">${marked}</p>
-              ${
-                hasHighlights
-                  ? `<div class="marked-legend"><span class="legend-mark"></span>带底色的文字是 AI 找到的可疑内容</div>`
-                  : `<div class="marked-legend safe"><span data-icon="check-circle"></span>未发现需要特别标记的语句</div>`
-              }
+              ${hasHighlights
+        ? `<div class="marked-legend"><span class="legend-mark"></span>带底色的文字是 AI 找到的可疑内容</div>`
+        : `<div class="marked-legend safe"><span data-icon="check-circle"></span>未发现需要特别标记的语句</div>`
+      }
             </div>
           </details>
         </div>
       </div>`;
-
     NY.icons(card);
   }
-
   function buildMarkedHTML(text, highlights) {
     if (!text) return "";
     if (!highlights || !highlights.length) {
       return NY.escapeHTML(text);
     }
-
     const safeRanges = highlights
       .filter((item) => Number.isFinite(item.start) && Number.isFinite(item.end))
       .map((item) => ({ ...item, start: Math.max(0, item.start), end: Math.min(text.length, item.end) }))
       .filter((item) => item.end > item.start)
       .sort((a, b) => a.start - b.start);
-
     let html = "";
     let cursor = 0;
     for (const item of safeRanges) {
@@ -352,40 +373,34 @@
     html += NY.escapeHTML(text.slice(cursor));
     return html;
   }
-
   function buildSpeechText(result) {
     const findings = result.findings.length
       ? `发现${result.findings.length}个可疑点：${result.findings
-          .slice(0, 3)
-          .map((finding) => finding.title)
-          .join("；")}。`
+        .slice(0, 3)
+        .map((finding) => finding.title)
+        .join(";")}。`
       : "没有发现常见的诈骗话术。";
-    const actions = result.actions.map((action, index) => `第${index + 1}，${action}`).join(" ");
+    const actions = result.actions.map((action, index) => `第${index + 1},${action}`).join(" ");
     return `识别结果是${result.label}，风险评分${result.score}分。${result.summary}${findings}${actions} 记住一句话：${result.mantra}`;
   }
-
   function buildShareText(result) {
     const findings = result.findings.length
-      ? `\n可疑点：${result.findings.map((finding) => finding.title).join("、")}`
-      : "\n可疑点：暂未发现常见骗术特征";
+      ? `\n可疑点:${result.findings.map((finding) => finding.title).join("、")}`
+      : "\n可疑点:暂未发现常见骗术特征";
     const actions = result.actions.map((action, index) => `${index + 1}. ${action}`).join("\n");
-    return `【银龄无诈 · AI 反诈识别】\n风险：${result.label}（风险分 ${result.score}/100）\n${result.summary}${findings}\n\n建议这样做：\n${actions}\n\n${result.mantra}\n\n（本地识别结果仅供参考，遇到转账请先核实或拨打 96110。）`;
+    return `【银龄无诈 · AI 反诈识别】\n风险:${result.label}（风险分 ${result.score}/100)\n${result.summary}${findings}\n\n建议这样做：\n${actions}\n\n${result.mantra}\n\n（识别结果仅供参考，遇到转账请先核实或拨打 96110。）`;
   }
-
   function renderHistory() {
     const section = $("#historySection");
     const list = $("#historyList");
     if (!section || !list) return;
-
     const history = NY.getJSON(HISTORY_KEY, []);
     const valid = Array.isArray(history) ? history.filter((item) => item && item.result) : [];
-
     if (!valid.length) {
       section.hidden = true;
       list.innerHTML = "";
       return;
     }
-
     section.hidden = false;
     list.innerHTML = valid
       .slice(0, 6)
@@ -402,10 +417,8 @@
         </button>`
       )
       .join("");
-
     NY.icons(list);
   }
-
   function saveHistory(result) {
     const history = NY.getJSON(HISTORY_KEY, []);
     const list = Array.isArray(history) ? history : [];
@@ -420,7 +433,6 @@
     deduped.unshift(entry);
     NY.writeJSON(HISTORY_KEY, deduped.slice(0, 6));
   }
-
   function loadHistoryItem(index) {
     const history = NY.getJSON(HISTORY_KEY, []);
     if (!Array.isArray(history) || !history[index] || !history[index].result) return;
@@ -444,7 +456,6 @@
       }, 60);
     }
   }
-
   function clearInput() {
     const input = $("#messageInput");
     if (!input) return;
@@ -457,7 +468,6 @@
     if (status) status.textContent = "输入内容已清空。";
     input.focus();
   }
-
   function fillSample(key) {
     const input = $("#messageInput");
     if (!input || !SAMPLES[key]) return;
@@ -479,13 +489,11 @@
       }, 120);
     }
   }
-
   function initVoiceInput() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const button = $("#voiceInputBtn");
     const label = $("#voiceBtnLabel");
     const status = $("#voiceStatus");
-
     if (!SpeechRecognition) {
       if (button) {
         button.classList.add("is-unavailable");
@@ -494,7 +502,6 @@
       if (label) label.textContent = "语音输入（不可用）";
       return;
     }
-
     const resetVoice = () => {
       isListening = false;
       if (button) {
@@ -504,7 +511,6 @@
       if (label) label.textContent = "语音输入";
       if (status) status.textContent = "";
     };
-
     button.addEventListener("click", () => {
       if (isListening) {
         try {
@@ -514,14 +520,12 @@
         }
         return;
       }
-
       voiceBaseText = $("#messageInput").value.trim();
       speechRecognition = new SpeechRecognition();
       speechRecognition.lang = "zh-CN";
       speechRecognition.continuous = false;
       speechRecognition.interimResults = true;
       speechRecognition.maxAlternatives = 1;
-
       speechRecognition.onstart = () => {
         isListening = true;
         button.classList.add("is-listening");
@@ -529,7 +533,6 @@
         label.textContent = "正在听…点击停止";
         status.textContent = "请慢慢说，说完会自动停止。";
       };
-
       speechRecognition.onresult = (event) => {
         let finalText = "";
         let interimText = "";
@@ -545,7 +548,6 @@
           updateCharCount();
         }
       };
-
       speechRecognition.onerror = (event) => {
         const message =
           event.error === "not-allowed"
@@ -556,11 +558,9 @@
         status.textContent = message;
         NY.showToast(message, "error");
       };
-
       speechRecognition.onend = () => {
         resetVoice();
       };
-
       try {
         speechRecognition.start();
       } catch (error) {
@@ -569,18 +569,15 @@
       }
     });
   }
-
   function bindResultActions() {
     const card = $("#resultCard");
     if (!card) return;
-
     card.addEventListener("click", (event) => {
       const readButton = event.target.closest("[data-result-read]");
       if (readButton) {
         if (currentResult) NY.speakText(buildSpeechText(currentResult), readButton);
         return;
       }
-
       const shareButton = event.target.closest("[data-result-share]");
       if (shareButton) {
         if (currentResult) {
@@ -591,7 +588,6 @@
         }
         return;
       }
-
       const againButton = event.target.closest("[data-result-again]");
       if (againButton) {
         const input = $("#messageInput");
@@ -607,7 +603,6 @@
       }
     });
   }
-
   function init() {
     const input = $("#messageInput");
     const analyzeBtn = $("#analyzeBtn");
@@ -619,15 +614,6 @@
     const clearHistory = $("#clearHistoryBtn");
     const status = $("#analysisStatus");
 
-    if (!window.FraudEngine) {
-      NY.showToast("识别引擎没有加载成功，请刷新页面。", "error");
-      return;
-    }
-
-    if (status) {
-      status.textContent = `AI 识别已准备好，可检查 ${window.FraudEngine.ruleCount} 类常见骗术特征。`;
-    }
-
     input.addEventListener("input", updateCharCount);
     input.addEventListener("keydown", (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
@@ -635,11 +621,8 @@
         analyzeNow();
       }
     });
-
     analyzeBtn.addEventListener("click", analyzeNow);
-
     clearBtn.addEventListener("click", clearInput);
-
     readBtn.addEventListener("click", () => {
       const text = input.value.trim();
       if (!text) {
@@ -648,13 +631,11 @@
       }
       NY.speakText(text, readBtn);
     });
-
     pasteBtn.addEventListener("click", async () => {
       if (!navigator.clipboard || typeof navigator.clipboard.readText !== "function") {
         NY.showToast("这个浏览器不能直接读取剪贴板。请长按输入框，选择“粘贴”。", "warm");
         return;
       }
-
       try {
         const clipboardText = (await navigator.clipboard.readText()).trim();
         if (!clipboardText) {
@@ -673,17 +654,14 @@
         NY.showToast("浏览器没有允许读取剪贴板。请长按输入框，选择“粘贴”。", "warm");
       }
     });
-
     chips.addEventListener("click", (event) => {
       const button = event.target.closest("[data-sample]");
       if (button) fillSample(button.dataset.sample);
     });
-
     historyList.addEventListener("click", (event) => {
       const item = event.target.closest("[data-history-index]");
       if (item) loadHistoryItem(Number(item.dataset.historyIndex));
     });
-
     const originalClearLabel = clearHistory.innerHTML;
     clearHistory.addEventListener("click", () => {
       if (!clearHistoryArmed) {
@@ -698,7 +676,6 @@
         }, 5000);
         return;
       }
-
       window.clearTimeout(clearHistoryTimer);
       clearHistoryArmed = false;
       clearHistory.innerHTML = originalClearLabel;
@@ -707,12 +684,10 @@
       renderHistory();
       NY.showToast("识别记录已清空");
     });
-
     bindResultActions();
     initVoiceInput();
     renderHistory();
     updateCharCount();
-
     const demoKey = new URLSearchParams(window.location.search).get("demo");
     if (demoKey && SAMPLES[demoKey]) {
       input.value = SAMPLES[demoKey];
@@ -720,6 +695,5 @@
       window.setTimeout(analyzeNow, 320);
     }
   }
-
   document.addEventListener("DOMContentLoaded", init);
 })();

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-font="large">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,6 +15,7 @@
   <script src="js/fraud-engine.js" defer></script>
   <script src="js/fraud.js" defer></script>
 </head>
+
 <body data-page="fraud">
   <a class="skip-link" href="#main">跳到主要内容</a>
 
@@ -35,9 +37,13 @@
           <svg viewBox="0 0 48 48">
             <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
             <g stroke="#fff9eb" stroke-width="2.3" stroke-linecap="round">
-              <path d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3"></path>
+              <path
+                d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3">
+              </path>
             </g>
-            <path d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z" fill="#fff9eb"></path>
+            <path
+              d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z"
+              fill="#fff9eb"></path>
           </svg>
         </span>
         <span class="brand-text">
@@ -60,10 +66,12 @@
           <span class="display-label">大字模式</span>
           <span class="mini-switch" aria-hidden="true"></span>
         </button>
-        <button class="icon-btn display-more" type="button" data-open-dialog="displayDialog" aria-label="字号与显示设置" title="显示设置">
+        <button class="icon-btn display-more" type="button" data-open-dialog="displayDialog" aria-label="字号与显示设置"
+          title="显示设置">
           <span data-icon="settings"></span>
         </button>
-        <button class="icon-btn menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <button class="icon-btn menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav"
+          aria-label="打开菜单">
           <span data-icon="menu"></span>
         </button>
       </div>
@@ -108,15 +116,8 @@
 
             <label class="sr-only" for="messageInput">粘贴需要识别的短信、聊天内容或网址</label>
             <div class="message-shell">
-              <textarea
-                class="message-input"
-                id="messageInput"
-                maxlength="4000"
-                rows="8"
-                spellcheck="false"
-                placeholder="例如：您好，您的快递丢失，点击链接办理双倍理赔……"
-                aria-describedby="checkerHelp"
-              ></textarea>
+              <textarea class="message-input" id="messageInput" maxlength="4000" rows="8" spellcheck="false"
+                placeholder="例如：您好，您的快递丢失，点击链接办理双倍理赔……" aria-describedby="checkerHelp"></textarea>
               <div class="message-meta">
                 <span id="charCount">0 / 4000 字</span>
                 <span class="message-meta-note">支持短信、聊天记录、网址</span>
@@ -176,10 +177,10 @@
               </span>
               <span class="analyze-arrow" data-icon="arrow-right"></span>
             </button>
-
+            <p id="streamResult" style="margin-top:16px;line-height:1.7;"></p>
             <p class="checker-privacy" id="checkerHelp">
               <span data-icon="lock"></span>
-              内容仅在本机分析，不会上传，也不会保存到服务器。识别结果只作提醒，不替代警方判断。
+              内容将提交AI进行分析,识别结果仅供参考,遇到转账要求,请先联系家人或者拨打96110核实。
             </p>
           </div>
 
@@ -190,15 +191,21 @@
               <ol class="mini-steps">
                 <li>
                   <span class="mini-step-number">1</span>
-                  <div><strong>看身份</strong><p>是不是正规机构？有没有用私人号码联系您？</p></div>
+                  <div><strong>看身份</strong>
+                    <p>是不是正规机构？有没有用私人号码联系您？</p>
+                  </div>
                 </li>
                 <li>
                   <span class="mini-step-number">2</span>
-                  <div><strong>看要求</strong><p>有没有让您转账、点链接、给验证码？</p></div>
+                  <div><strong>看要求</strong>
+                    <p>有没有让您转账、点链接、给验证码？</p>
+                  </div>
                 </li>
                 <li>
                   <span class="mini-step-number">3</span>
-                  <div><strong>看情绪</strong><p>是不是在催您、吓您，或者让您瞒着家人？</p></div>
+                  <div><strong>看情绪</strong>
+                    <p>是不是在催您、吓您，或者让您瞒着家人？</p>
+                  </div>
                 </li>
               </ol>
               <p class="aside-footnote">占了其中两条以上，就要格外当心。</p>
@@ -273,9 +280,13 @@
             <svg viewBox="0 0 48 48">
               <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
               <g stroke="#fff9eb" stroke-width="2.3" stroke-linecap="round">
-                <path d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3"></path>
+                <path
+                  d="M24 5.5v4.6M24 34v4.6M7.5 22h4.6M35.9 22h4.6M12.4 10.4l3.3 3.3M32.3 30.3l3.3 3.3M12.4 33.6l3.3-3.3M32.3 13.7l3.3-3.3">
+                </path>
               </g>
-              <path d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z" fill="#fff9eb"></path>
+              <path
+                d="M24 40.5c-4.4-3.2-7.1-5.9-7.1-9.4a4.1 4.1 0 0 1 7.1-2.2 4.1 4.1 0 0 1 7.1 2.2c0 3.5-2.7 6.2-7.1 9.4Z"
+                fill="#fff9eb"></path>
             </svg>
           </span>
           <span class="brand-text">
@@ -307,4 +318,5 @@
     </div>
   </footer>
 </body>
+
 </html>
