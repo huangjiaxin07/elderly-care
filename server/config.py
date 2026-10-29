@@ -90,6 +90,9 @@ class Config:
     CODE_DAILY_LIMIT = 10                   # 每号每天 10 条
     CODE_MAX_ATTEMPTS = 5                   # 错 5 次作废
     CODE_LOG = _bool("CODE_LOG", True)      # 是否把验证码打到控制台（开发用）
+    # 演示用：没有短信通道时，把验证码放进接口返回的 debug_code 字段。
+    # 生产环境必须为 false，否则任何人都能拿到验证码。
+    CODE_REVEAL = _bool("CODE_REVEAL", False)
 
     # ---- 密码 ----
     # plain: 前端直接传明文（靠 HTTPS 保护）

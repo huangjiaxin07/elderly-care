@@ -53,7 +53,12 @@ def verify_code():
     if config.Config.CODE_LOG and config.Config.SMS_PROVIDER == "log":
         current_app.logger.info("[SMS] phone=%s scene=%s code=%s", phone, scene, code)
 
-    return respond(0, "验证码已发送，请在 10 分钟内输入")
+    # 没有短信通道时的演示兜底：把验证码直接返回，前端/curl 都能直接拿到
+    extra = {}
+    if config.Config.CODE_REVEAL:
+        extra["debug_code"] = code
+
+    return respond(0, "验证码已发送，请在 10 分钟内输入", **extra)
 
 
 @bp.post("/register")

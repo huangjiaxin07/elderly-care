@@ -63,10 +63,11 @@
       none: "暂未见明显风险"
     };
     // AI返回 reasons[] → 前端 findings[]
+    const severity = ai.level === "none" ? "low" : ai.level;
     const findings = (ai.reasons || []).map(reason => ({
       title: reason,
       icon: "alert",
-      severity: ai.level,
+      severity: severity,
       explain: "",
       evidence: []
     }));
@@ -78,7 +79,7 @@
       label: levelMap[ai.level] ?? "未知风险",
       score: ai.score,
       findings: findings,
-      actions: ai.advice || [],
+      actions: ai.advice ? [ai.advice] : [],
       text: text,
       highlights: [],
       mantra: "凡是要求转账的，先挂断再核实。"
@@ -138,33 +139,59 @@
     if (streamDom) streamDom.textContent = "";
 
     let dotTimer = null;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 25000);
     try {
-      // 加载打点动画：. . . .
+      // 等待动画
       dotTimer = setInterval(() => {
-        if (streamDom) streamDom.innerText += ".";
+        if (streamDom) streamDom.innerText += "·";
       }, 300);
 
-      const res = await fetch("/api/detect", {
+      const res = await fetch("/api/analyze", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: text })
+        body: JSON.stringify({ text }),
+        signal: controller.signal,
       });
-      if (!res.ok) throw new Error("后端接口异常");
+      if (!res.ok) throw new Error("后端接口异常 " + res.status);
 
       const reader = res.body.getReader();
-      const decoder = new TextDecoder("utf‑8");
+      const decoder = new TextDecoder("utf-8");
       let buffer = "";
+      let aiRaw = null;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        // 收到分片立刻关掉打点
-        clearInterval(dotTimer);
-        dotTimer = null;
-        const chunk = decoder.decode(value, { stream: true });
-        buffer += chunk;
-        if (streamDom) streamDom.innerText = buffer;
+        if (dotTimer) {
+          clearInterval(dotTimer);
+          dotTimer = null;
+          if (streamDom) streamDom.textContent = "";
+        }
+        buffer += decoder.decode(value, { stream: true });
+        // SSE：每帧是 "data: <json>" + 空行，逐帧解析，不能整体 JSON.parse
+        // 兼容 \n\n 与 \r\n\r\n 两种换行
+        let match;
+        while ((match = buffer.match(/\r?\n\r?\n/)) !== null) {
+          const frame = buffer.slice(0, match.index).trim();
+          buffer = buffer.slice(match.index + match[0].length);
+          if (!frame.startsWith("data:")) continue;
+          let evt;
+          try {
+            evt = JSON.parse(frame.slice(5).trim());
+          } catch (error) {
+            continue;
+          }
+          if (evt.type === "hint") {
+            if (streamDom) streamDom.textContent += evt.text;
+          } else if (evt.type === "result") {
+            aiRaw = evt.detail;
+          } else if (evt.type === "fallback") {
+            aiRaw = null;
+          }
+        }
       }
-      const aiRaw = JSON.parse(buffer);
+      if (!aiRaw) throw new Error("AI 没有返回可用结果");
       const result = adaptAiResult(aiRaw, text);
 
       currentResult = result;
@@ -194,10 +221,31 @@
       }
     } catch (err) {
       console.error(err);
-      NY.showToast("识别时出了一点小问题，请再试一次。", "error");
+      // AI 不可用时回退本地规则引擎：断网、后端异常、超时都还能出结果
+      let local = null;
+      try {
+        local = window.FraudEngine && window.FraudEngine.analyze(text);
+      } catch (fallbackError) {
+        local = null;
+      }
+      if (local && local.valid) {
+        currentResult = local;
+        renderResult(local);
+        saveHistory(local);
+        renderHistory();
+        if (status) {
+          status.textContent = `AI 暂不可用，已用本地规则判断，结果${local.label}，风险评分 ${local.score} 分。`;
+        }
+        const localSection = $("#resultSection");
+        if (localSection) localSection.hidden = false;
+        NY.showToast("AI 暂不可用，已用本地规则判断", "warm");
+      } else {
+        NY.showToast("识别时出了一点小问题，请再试一次。", "error");
+      }
     } finally {
-      // 无论成功失败，清除打点定时器，恢复按钮
+      // 无论成功失败，清除定时器，恢复按钮
       if (dotTimer) clearInterval(dotTimer);
+      window.clearTimeout(timeoutId);
       if (streamDom) streamDom.textContent = "";
       setAnalyzing(false);
     }
