@@ -436,7 +436,7 @@
               </div>
               <div class="field field-full">
                 <label for="contactPhoneInput">电话号码</label>
-                <input class="input" id="contactPhoneInput" name="contactPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="例如：138 0000 0000" maxlength="20" required />
+                <input class="input" id="contactPhoneInput" name="contactPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="请输入11位号码 例如:138 0000 0000" maxlength="11">
                 <span class="field-hint">建议填写手机号。保存后，紧急求助区会显示“一键联系”。</span>
               </div>
             </div>
@@ -472,9 +472,9 @@
         return;
       }
 
-      const digits = phone.replace(/[^\d]/g, "");
-      if (!/^[0-9+\-\s]{5,20}$/.test(phone) || digits.length < 5) {
-        error.textContent = "电话号码好像不太完整，请检查后再保存。";
+      const digits = phone.replace(/\D/g, '');
+      if (digits.length !== 11) {
+        error.textContent = "请输入正确的11位手机号码";
         error.hidden = false;
         form.contactPhone.focus();
         return;
