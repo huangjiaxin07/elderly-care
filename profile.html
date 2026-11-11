@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#f5f0e5" />
   <meta name="description" content="银龄无诈个人设置：调整字体、高对比度、自动朗读，管理亲情联系人、安全识别记录和学习进度。所有数据仅保存在本机。" />
   <title>我的设置 · 银龄无诈</title>
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/pages.css" />
-  <link rel="stylesheet" href="css/profile.css" />
-  <script src="js/app.js" defer></script>
-  <script src="js/profile.js" defer></script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+  <link rel="stylesheet" href="/css/profile.css" />
+  <script src="/js/app.js" defer></script>
+  <script src="/js/profile.js" defer></script>
 </head>
 <body data-page="profile">
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -29,7 +29,7 @@
 
   <header class="site-header">
     <div class="container-wide header-inner">
-      <a class="brand" href="index.html" aria-label="银龄无诈首页">
+      <a class="brand" href="/" aria-label="银龄无诈首页">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 48 48">
             <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
@@ -46,11 +46,11 @@
       </a>
 
       <nav class="site-nav" id="siteNav" aria-label="主导航">
-        <a class="nav-link" href="index.html">首页</a>
-        <a class="nav-link" href="fraud.html">反诈检测</a>
-        <a class="nav-link" href="services.html">便民服务</a>
-        <a class="nav-link" href="learn.html">手机课堂</a>
-        <a class="nav-link" href="profile.html" aria-current="page">我的</a>
+        <a class="nav-link" href="/">首页</a>
+        <a class="nav-link" href="/fraud">反诈检测</a>
+        <a class="nav-link" href="/services">便民服务</a>
+        <a class="nav-link" href="/learn">手机课堂</a>
+        <a class="nav-link" href="/profile" aria-current="page">我的</a>
       </nav>
 
       <div class="header-actions">
@@ -73,7 +73,7 @@
     <section class="page-hero page-hero-profile">
       <div class="container">
         <nav class="breadcrumb" aria-label="面包屑">
-          <a href="index.html">首页</a>
+          <a href="/">首页</a>
           <span data-icon="chevron-right"></span>
           <span>我的设置</span>
         </nav>
@@ -85,7 +85,7 @@
           </div>
           <div class="page-hero-note">
             <span data-icon="lock"></span>
-            <p>无需注册账号，也不会把您的设置、聊天内容或学习记录上传到任何服务器。</p>
+            <p>无需注册账号。您的设置、识别记录和学习进度只保存在本机；识别时提交的内容仅用于本次判断。</p>
           </div>
         </div>
       </div>
@@ -192,8 +192,8 @@
               </label>
               <label class="switch-row" for="profileAutoRead">
                 <span class="switch-copy">
-                  <strong>自动朗读识别结果</strong>
-                  <small>反诈识别完成后，自动为您读出结果。</small>
+                  <strong>识别后自动读一句结论</strong>
+                  <small>反诈识别完成后，自动用语音说一句结论；右下角的「播报」按钮也能随时开关。</small>
                 </span>
                 <span class="switch">
                   <input type="checkbox" id="profileAutoRead" />
@@ -205,7 +205,7 @@
             <div class="profile-preview">
               <span class="profile-preview-label">效果预览</span>
               <p>陌生来电不要急，先挂断，再和家人或 96110 核实。</p>
-              <button class="preview-read" type="button" data-read-text="陌生来电不要急，先挂断，再和家人或 96110 核实。">
+              <button class="preview-read" type="button" data-read-audio="/assets/voice/preview.mp3" data-read-text="陌生来电不要急，先挂断，再和家人或 96110 核实。">
                 <span data-icon="volume"></span>读一遍
               </button>
             </div>
@@ -253,7 +253,7 @@
                   <span id="profileQuizBest">小测验：还没有作答</span>
                 </div>
               </div>
-              <a class="profile-text-link" href="learn.html">
+              <a class="profile-text-link" href="/learn">
                 去手机课堂<span data-icon="arrow-right"></span>
               </a>
             </section>
@@ -266,13 +266,13 @@
                 <h2 id="profileHistoryTitle">安全识别记录</h2>
                 <p>只保存在本机，最多保留 6 条。</p>
               </div>
-              <a class="profile-head-link" href="fraud.html">去识别<span data-icon="arrow-right"></span></a>
+              <a class="profile-head-link" href="/fraud">去识别<span data-icon="arrow-right"></span></a>
             </div>
             <div class="profile-history-list" id="profileHistoryList"></div>
             <div class="profile-history-empty" id="profileHistoryEmpty" hidden>
               <span data-icon="search-shield"></span>
               <p>还没有识别记录。收到可疑消息时，可以来让银龄无诈看看。</p>
-              <a class="btn btn-secondary btn-sm" href="fraud.html">识别一条消息</a>
+              <a class="btn btn-secondary btn-sm" href="/fraud">识别一条消息</a>
             </div>
             <div class="profile-history-foot" id="profileHistoryFoot" hidden>
               <span><span data-icon="lock"></span>记录不会上传</span>
@@ -287,11 +287,11 @@
               <span class="profile-card-icon warm"><span data-icon="lock"></span></span>
               <div>
                 <h2 id="privacyTitle">数据与隐私</h2>
-                <p>您的东西，只留在您自己的设备里。</p>
+                <p>您的设置和记录，只留在您自己的设备里。</p>
               </div>
             </div>
             <ul class="privacy-list">
-              <li><span data-icon="check"></span><span><strong>不上传：</strong>反诈识别在本机完成，聊天内容不会离开设备。</span></li>
+              <li><span data-icon="check"></span><span><strong>不留存：</strong>识别内容仅用于本次判断，不保存到服务器。</span></li>
               <li><span data-icon="check"></span><span><strong>不登录：</strong>不需要手机号、不需要注册账号，也没有广告追踪。</span></li>
               <li><span data-icon="check"></span><span><strong>可清除：</strong>您可以随时清空识别记录、学习进度和个人设置。</span></li>
             </ul>
@@ -311,8 +311,8 @@
             <p>遇到不懂的地方，随时回来调整。没有什么是必须一次学会的。</p>
           </div>
           <div class="profile-help-actions">
-            <a class="btn btn-secondary btn-sm" href="services.html">看便民服务</a>
-            <a class="btn btn-primary btn-sm" href="fraud.html">识别可疑消息<span data-icon="arrow-right"></span></a>
+            <a class="btn btn-secondary btn-sm" href="/services">看便民服务</a>
+            <a class="btn btn-primary btn-sm" href="/fraud">识别可疑消息<span data-icon="arrow-right"></span></a>
           </div>
         </div>
       </div>
@@ -322,7 +322,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <a class="brand" href="index.html" aria-label="银龄无诈首页">
+        <a class="brand" href="/" aria-label="银龄无诈首页">
           <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 48 48">
               <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
@@ -342,10 +342,10 @@
       <div>
         <h3 class="footer-heading">常用入口</h3>
         <ul class="footer-links">
-          <li><a href="fraud.html">反诈识别</a></li>
-          <li><a href="services.html">便民服务</a></li>
-          <li><a href="learn.html">手机课堂</a></li>
-          <li><a href="profile.html">我的设置</a></li>
+          <li><a href="/fraud">反诈识别</a></li>
+          <li><a href="/services">便民服务</a></li>
+          <li><a href="/learn">手机课堂</a></li>
+          <li><a href="/profile">我的设置</a></li>
         </ul>
       </div>
       <div>

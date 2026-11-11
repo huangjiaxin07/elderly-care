@@ -14,12 +14,60 @@
     travel: "出行联系",
   };
 
+  // 图标底色跟着分类走，不再一个服务一个颜色：
+  // 社保=淡金、看病=淡陶、生活=淡蓝、出行=淡绿
+  const CATEGORY_TONE = {
+    medical: "clay",
+    social: "gold",
+    life: "blue",
+    travel: "green",
+  };
+
   const SERVICES = [
-    {
+  {
+      id: "medical-insurance",
+      category: "social",
+      icon: "id-card",
+      title: "查医保余额和消费记录",
+      summary: "看病买药花了多少，心里有个数。",
+      intro: "通过国家医保服务平台或医保电子凭证，查看自己的医保余额和近期消费。",
+      duration: "约 4 分钟",
+      level: "需要进行人脸认证",
+      keywords: ["医保", "余额", "消费记录", "医保卡", "电子凭证", "买药"],
+      needs: ["本人身份证", "手机", "本人人脸识别"],
+      steps: [
+        "打开手机应用商店，搜索“国家医保服务平台”，认准国家医保局官方 App；也可以在微信或支付宝搜索“医保电子凭证”。",
+        "按提示完成登录和实名认证。需要人脸识别时，找光线明亮的地方，按提示眨眼、张嘴。",
+        "在首页找到“个人参保信息”或“医保账户”，就能看到医保余额和参保状态。",
+        "点“消费记录”或“就医记录”，可以查看近期看病、买药的明细。",
+        "金额有疑问，拨打参保地医保服务热线 12393，或带上身份证、医保卡到医保大厅咨询。",
+      ],
+      tip: "不要通过陌生人发来的“医保补贴”“账户异常”链接登录，也不要透露短信验证码。",
+    },
+  {
+      id: "social-security",
+      category: "social",
+      icon: "bank",
+      title: "社保待遇资格认证",
+      summary: "每年一次，在家刷脸就能办。",
+      intro: "领取养老金的老人，有的地区需要定期做待遇资格认证。不会操作可以去社区请工作人员帮忙。",
+      duration: "约 5 分钟",
+      level: "需要本人刷脸",
+      keywords: ["社保", "养老金", "资格认证", "认证", "人脸", "12333"],
+      needs: ["本人身份证", "手机", "本人人脸识别"],
+      steps: [
+        "先确认是否需要认证。可以拨打 12333 人社服务热线，或直接问社区工作人员。",
+        "在应用商店搜索当地人社 App，或在微信、支付宝搜索“电子社保卡”小程序，认准官方标识。",
+        "登录后找到“待遇资格认证”或“社保待遇领取资格认证”，按提示填写姓名、身份证号。",
+        "按屏幕提示进行人脸识别，可能需要眨眼、张嘴。找光线均匀的地方，不要戴帽子或口罩。",
+        "看到“认证成功”后截屏保存。行动不便的老人，可以联系社区申请上门认证。",
+      ],
+      tip: "资格认证不需要交费。任何收费“代办认证”、索要银行卡密码的，都不要相信。",
+    },
+  {
       id: "appointment",
       category: "medical",
       icon: "calendar",
-      tone: "green",
       title: "预约医院挂号",
       summary: "提前约好时间，少排队、少跑空。",
       intro: "用手机提前挂号，到了医院直接签到就诊。第一次操作，最好让家人陪在旁边。",
@@ -37,53 +85,10 @@
       ],
       tip: "任何说能“内部留号”“代挂号”并让您私下转账的，都不要相信。所有挂号请走医院官方入口。",
     },
-    {
-      id: "medical-insurance",
-      category: "social",
-      icon: "id-card",
-      tone: "blue",
-      title: "查医保余额和消费记录",
-      summary: "看病买药花了多少，心里有个数。",
-      intro: "通过国家医保服务平台或医保电子凭证，查看自己的医保余额和近期消费。",
-      duration: "约 4 分钟",
-      level: "需要进行人脸认证",
-      keywords: ["医保", "余额", "消费记录", "医保卡", "电子凭证", "买药"],
-      needs: ["本人身份证", "手机", "本人人脸识别"],
-      steps: [
-        "打开手机应用商店，搜索“国家医保服务平台”，认准国家医保局官方 App；也可以在微信或支付宝搜索“医保电子凭证”。",
-        "按提示完成登录和实名认证。需要人脸识别时，找光线明亮的地方，按提示眨眼、张嘴。",
-        "在首页找到“个人参保信息”或“医保账户”，就能看到医保余额和参保状态。",
-        "点“消费记录”或“就医记录”，可以查看近期看病、买药的明细。",
-        "金额有疑问，拨打参保地医保服务热线 12393，或带上身份证、医保卡到医保大厅咨询。",
-      ],
-      tip: "不要通过陌生人发来的“医保补贴”“账户异常”链接登录，也不要透露短信验证码。",
-    },
-    {
-      id: "social-security",
-      category: "social",
-      icon: "bank",
-      tone: "gold",
-      title: "社保待遇资格认证",
-      summary: "每年一次，在家刷脸就能办。",
-      intro: "领取养老金的老人，有的地区需要定期做待遇资格认证。不会操作可以去社区请工作人员帮忙。",
-      duration: "约 5 分钟",
-      level: "需要本人刷脸",
-      keywords: ["社保", "养老金", "资格认证", "认证", "人脸", "12333"],
-      needs: ["本人身份证", "手机", "本人人脸识别"],
-      steps: [
-        "先确认是否需要认证。可以拨打 12333 人社服务热线，或直接问社区工作人员。",
-        "在应用商店搜索当地人社 App，或在微信、支付宝搜索“电子社保卡”小程序，认准官方标识。",
-        "登录后找到“待遇资格认证”或“社保待遇领取资格认证”，按提示填写姓名、身份证号。",
-        "按屏幕提示进行人脸识别，可能需要眨眼、张嘴。找光线均匀的地方，不要戴帽子或口罩。",
-        "看到“认证成功”后截屏保存。行动不便的老人，可以联系社区申请上门认证。",
-      ],
-      tip: "资格认证不需要交费。任何收费“代办认证”、索要银行卡密码的，都不要相信。",
-    },
-    {
+  {
       id: "utilities",
       category: "life",
       icon: "bolt",
-      tone: "clay",
       title: "交水费、电费、燃气费",
       summary: "不出门，也不用去排队。",
       intro: "用微信或支付宝的生活缴费功能，输入户号，就能在家交水电燃气费。",
@@ -101,32 +106,10 @@
       ],
       tip: "不要向陌生人提供的个人收款码缴费。公共事业费不会要求您转到个人账户。",
     },
-    {
-      id: "mobile-recharge",
-      category: "life",
-      icon: "phone",
-      tone: "green",
-      title: "手机话费充值",
-      summary: "号码别输错，几步就能到账。",
-      intro: "话费快用完时，用微信或支付宝充值。充值前一定多核对一遍手机号码。",
-      duration: "约 2 分钟",
-      level: "操作简单",
-      keywords: ["话费", "充值", "手机号", "移动", "联通", "电信"],
-      needs: ["手机号码", "支付密码"],
-      steps: [
-        "打开微信“我 → 服务 → 手机充值”，或在支付宝搜索“充值中心”。",
-        "输入要充值的手机号码，仔细核对一遍，别输错一个数字。",
-        "选择充值金额，例如 50 元或 100 元，看清到账时间。",
-        "确认运营商和号码，点“立即充值”并支付。",
-        "充值成功后会收到短信。如果没有到账，联系运营商官方客服：移动 10086、联通 10010、电信 10000。",
-      ],
-      tip: "不要相信“充 100 送 200”的陌生链接，话费优惠请以运营商官方 App 为准。",
-    },
-    {
+  {
       id: "taxi",
       category: "travel",
-      icon: "bus",
-      tone: "gold",
+      icon: "taxi",
       title: "用手机叫出租车",
       summary: "在楼下等车，不用站在路边招手。",
       intro: "用微信、支付宝或地图 App 叫车。上车前核对车牌，比什么都重要。",
@@ -144,11 +127,10 @@
       ],
       tip: "不要上私下揽客、没有平台订单的车。夜间出门，尽量让家人陪同。",
     },
-    {
+  {
       id: "video-call",
       category: "travel",
       icon: "video",
-      tone: "blue",
       title: "和家人视频通话",
       summary: "不用打字，看看家人的脸。",
       intro: "微信视频通话只需要点两下。听不见就开扬声器，不想聊了就点红色按钮。",
@@ -165,11 +147,30 @@
       ],
       tip: "陌生人要求视频通话并让您共享屏幕、转账的，立刻挂断。家人借钱，也要先回拨原来的号码确认。",
     },
-    {
+  {
+      id: "mobile-recharge",
+      category: "life",
+      icon: "phone",
+      title: "手机话费充值",
+      summary: "号码别输错，几步就能到账。",
+      intro: "话费快用完时，用微信或支付宝充值。充值前一定多核对一遍手机号码。",
+      duration: "约 2 分钟",
+      level: "操作简单",
+      keywords: ["话费", "充值", "手机号", "移动", "联通", "电信"],
+      needs: ["手机号码", "支付密码"],
+      steps: [
+        "打开微信“我 → 服务 → 手机充值”，或在支付宝搜索“充值中心”。",
+        "输入要充值的手机号码，仔细核对一遍，别输错一个数字。",
+        "选择充值金额，例如 50 元或 100 元，看清到账时间。",
+        "确认运营商和号码，点“立即充值”并支付。",
+        "充值成功后会收到短信。如果没有到账，联系运营商官方客服：移动 10086、联通 10010、电信 10000。",
+      ],
+      tip: "不要相信“充 100 送 200”的陌生链接，话费优惠请以运营商官方 App 为准。",
+    },
+  {
       id: "courier",
       category: "life",
       icon: "message",
-      tone: "clay",
       title: "查快递到哪儿了",
       summary: "输入单号，就知道到哪一站。",
       intro: "在快递公司官方小程序或购物 App 里查看物流，不用点陌生短信里的链接。",
@@ -248,7 +249,7 @@
         (service) => `
         <button class="service-card" type="button" data-service="${service.id}" aria-label="查看${service.title}的办理步骤">
           <span class="service-card-top">
-            <span class="service-icon tone-${service.tone}"><span data-icon="${service.icon}"></span></span>
+            <span class="service-icon tone-${CATEGORY_TONE[service.category] || "green"}"><span data-icon="${service.icon}"></span></span>
             <span class="service-category">${categoryLabel(service.category)}</span>
           </span>
           <span class="service-title">${service.title}</span>
@@ -284,6 +285,9 @@
     const dialog = $("#serviceDialog");
     const content = $("#serviceDialogContent");
     if (!dialog || !content) return;
+
+    // 打开这项服务时先把朗读音频取下来
+    NY.preloadVoice(`/assets/voice/services/${service.id}.mp3`);
 
     content.innerHTML = `
       <div class="service-dialog-head">
@@ -343,7 +347,12 @@
     NY.icons(content);
 
     content.querySelector("[data-service-read]").addEventListener("click", (event) => {
-      NY.speakText(serviceSpeech(service), event.currentTarget);
+      // 步骤是固定内容，用预合成的音频；浏览器合成只作兜底
+      NY.playVoice(
+        `/assets/voice/services/${service.id}.mp3`,
+        event.currentTarget,
+        serviceSpeech(service)
+      );
     });
 
     content.querySelector("[data-service-copy]").addEventListener("click", () => {
@@ -416,6 +425,13 @@
         chip.setAttribute("aria-pressed", String(active));
       });
       renderServices();
+      // 筛选完屏幕上只是少了几张卡，老人看不出「点中了没有」，用一句话说清楚
+      const total = filteredServices().length;
+      const label = categoryLabel(state.category);
+      NY.showToast(
+        total ? `${label}，共 ${total} 项服务` : `${label}，暂时没有符合条件的服务`,
+        total ? "" : "warm"
+      );
     });
 
     reset.addEventListener("click", () => {
@@ -429,6 +445,7 @@
         chip.setAttribute("aria-pressed", String(active));
       });
       renderServices();
+      NY.showToast(`已显示全部 ${SERVICES.length} 项服务`);
     });
   }
 

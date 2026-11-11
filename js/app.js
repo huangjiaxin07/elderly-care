@@ -14,7 +14,9 @@
     font: "large",
     contrast: false,
     reduceMotion: false,
-    autoRead: false,
+    // 默认开启：老人不需要先去设置里找开关，识别完自动读一句结论。
+    // 页面右下角有固定位置的「播报 / 不播报」按钮，随时可以关掉。
+    autoRead: true,
     name: "",
     contactName: "",
     contactRelation: "子女",
@@ -38,6 +40,7 @@
     "siren": '<path d="M6 18v-5a6 6 0 0 1 12 0v5"/><path d="M4 21h16M12 2v2M4.5 5.5l1.4 1.4M19.5 5.5l-1.4 1.4"/><path d="M9 18h6"/>',
     "hospital": '<path d="M4 21V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14"/><path d="M2 21h20M9 9h6M12 6v6M9.5 16h5"/>',
     "bus": '<rect x="4" y="3" width="16" height="15" rx="3"/><path d="M4 11h16M8 18v2M16 18v2"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/><path d="M8 3v4M16 3v4"/>',
+    "taxi": '<path d="M3.9 16.8v-3.4h16.2v3.4"/><path d="M6.9 13.4 8.5 10.1a2 2 0 0 1 1.8-1.1h3.4a2 2 0 0 1 1.8 1.1l1.6 3.3"/><circle cx="7.4" cy="17.8" r="1.5"/><circle cx="16.6" cy="17.8" r="1.5"/><rect x="10.2" y="5.6" width="3.6" height="1.7" rx="0.6"/>',
     "book": '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V4H6.5A2.5 2.5 0 0 0 4 6.5v13Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M8 8h8M8 11.5h5"/>',
     "book-open": '<path d="M12 6.5C10.5 5 8.5 4.5 5 4.5v14c3.5 0 5.5.6 7 2 1.5-1.4 3.5-2 7-2v-14c-3.5 0-5.5.5-7 2Z"/><path d="M12 6.5v14"/>',
     "user": '<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>',
@@ -328,8 +331,8 @@
               </label>
               <label class="switch-row" for="settingAutoRead">
                 <span class="switch-copy">
-                  <strong>自动朗读识别结果</strong>
-                  <small>反诈识别完成后，自动为您读出结果。</small>
+                  <strong>识别后自动读一句结论</strong>
+                  <small>反诈识别完成后，自动用语音说一句结论；右下角的「播报」按钮也能随时开关。</small>
                 </span>
                 <span class="switch">
                   <input type="checkbox" id="settingAutoRead" />
@@ -384,7 +387,7 @@
 
     document.getElementById("settingAutoRead").addEventListener("change", (event) => {
       saveSettings({ autoRead: event.target.checked }, {
-        toast: event.target.checked ? "识别完成后会自动朗读" : "已关闭自动朗读",
+        toast: event.target.checked ? "识别完会自动读一句结论" : "已关闭自动播报",
       });
     });
 
@@ -504,6 +507,9 @@
 
   let activeUtterance = null;
   let activeSpeakButton = null;
+  let activeAudio = null;
+  let silentWavUrl = "";
+  const preloadedVoices = new Set();
 
   function canSpeak() {
     return "speechSynthesis" in window && typeof window.SpeechSynthesisUtterance === "function";
@@ -519,11 +525,178 @@
     activeSpeakButton = null;
   }
 
-  function stopSpeaking() {
-    if (!canSpeak()) return;
-    window.speechSynthesis.cancel();
+  // mp3 与浏览器合成共用一条发声通道：同一时间只能有一个在响。
+  function getAudio() {
+    if (!activeAudio) {
+      activeAudio = new Audio();
+      activeAudio.preload = "auto";
+      activeAudio.addEventListener("ended", () => setVoicePlaying(false));
+      activeAudio.addEventListener("error", () => setVoicePlaying(false));
+    }
+    return activeAudio;
+  }
+
+  function setVoicePlaying(value) {
+    const button = document.getElementById("voiceToggle");
+    if (button) button.classList.toggle("is-speaking", value);
+  }
+
+  function isVoicePlaying() {
+    if (activeUtterance) return true;
+    return Boolean(activeAudio && !activeAudio.paused && !activeAudio.ended);
+  }
+
+  function silence() {
+    if (activeAudio) {
+      try {
+        activeAudio.pause();
+      } catch (error) {
+        /* 忽略 */
+      }
+      try {
+        activeAudio.currentTime = 0;
+      } catch (error) {
+        /* 忽略 */
+      }
+    }
+    if (canSpeak()) window.speechSynthesis.cancel();
     activeUtterance = null;
     resetSpeakButton();
+    setVoicePlaying(false);
+  }
+
+  function stopSpeaking() {
+    silence();
+  }
+
+  /**
+   * 播放一段录音（固定结论走预合成的 mp3，音色统一、零等待）。
+   * 播放被浏览器拦下时，退回到浏览器合成，保证「点了至少能听见」。
+   */
+  function playVoice(src, button, fallbackText) {
+    if (!src) return false;
+    silence();
+    const audio = getAudio();
+    audio.muted = false;
+    audio.src = src;
+    if (button) {
+      activeSpeakButton = button;
+      button.classList.add("is-speaking");
+    }
+    const played = audio.play();
+    if (played && typeof played.then === "function") {
+      played
+        .then(() => setVoicePlaying(true))
+        .catch(() => {
+          resetSpeakButton();
+          setVoicePlaying(false);
+          if (fallbackText) speakText(fallbackText);
+        });
+    }
+    return true;
+  }
+
+  // 0.06 秒的静音 wav：只为了让 iOS 记住「这个音频被用户手势激活过」
+  function buildSilentWav() {
+    const rate = 8000;
+    const samples = Math.floor(rate * 0.06);
+    const buffer = new ArrayBuffer(44 + samples);
+    const view = new DataView(buffer);
+    const write = (offset, text) => {
+      for (let i = 0; i < text.length; i += 1) {
+        view.setUint8(offset + i, text.charCodeAt(i));
+      }
+    };
+    write(0, "RIFF");
+    view.setUint32(4, 36 + samples, true);
+    write(8, "WAVE");
+    write(12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, rate, true);
+    view.setUint32(28, rate, true);
+    view.setUint16(32, 1, true);
+    view.setUint16(34, 8, true);
+    write(36, "data");
+    view.setUint32(40, samples, true);
+    for (let i = 0; i < samples; i += 1) view.setUint8(44 + i, 128);
+    return URL.createObjectURL(new Blob([buffer], { type: "audio/wav" }));
+  }
+
+  function unlockVoice() {
+    if (isVoicePlaying()) return;
+    try {
+      const audio = getAudio();
+      if (!silentWavUrl) silentWavUrl = buildSilentWav();
+      audio.src = silentWavUrl;
+      const played = audio.play();
+      if (played && typeof played.catch === "function") played.catch(() => {});
+    } catch (error) {
+      /* 解锁失败不影响主流程，后面 playVoice 还会再试一次 */
+    }
+  }
+
+  function preloadVoice(src) {
+    if (!src || preloadedVoices.has(src)) return;
+    preloadedVoices.add(src);
+    try {
+      const audio = new Audio();
+      audio.preload = "auto";
+      audio.src = src;
+      audio.load();
+    } catch (error) {
+      /* 预加载失败不影响播放 */
+    }
+  }
+
+  function updateVoiceToggle() {
+    const button = document.getElementById("voiceToggle");
+    if (!button) return;
+    const on = Boolean(settings.autoRead);
+    button.setAttribute("aria-pressed", String(on));
+    button.setAttribute(
+      "aria-label",
+      on ? "语音播报已开启，点击关闭" : "语音播报已关闭，点击开启"
+    );
+    const label = button.querySelector(".voice-toggle-label");
+    if (label) label.textContent = "播报";
+    // 设置页里的开关跟着同步，避免同屏出现两个矛盾的状态
+    document.querySelectorAll("#profileAutoRead, #settingAutoRead").forEach((input) => {
+      input.checked = on;
+    });
+  }
+
+  function injectVoiceToggle() {
+    if (document.getElementById("voiceToggle")) return;
+    const button = document.createElement("button");
+    button.id = "voiceToggle";
+    button.type = "button";
+    button.className = "voice-toggle";
+    button.innerHTML = `
+      <span class="voice-toggle-icons">
+        <span class="voice-icon-on" data-icon="volume"></span>
+        <span class="voice-icon-off" data-icon="volume-off"></span>
+      </span>
+      <span class="voice-toggle-label">播报</span>`;
+    document.body.appendChild(button);
+    hydrateIcons(button);
+    updateVoiceToggle();
+
+    button.addEventListener("click", () => {
+      const next = !settings.autoRead;
+      saveSettings({ autoRead: next });
+      updateVoiceToggle();
+      if (!next) {
+        silence();
+        showToast("已关闭播报");
+        return;
+      }
+      unlockVoice();
+      showToast("已开启播报");
+    });
+
+    document.addEventListener(SETTINGS_EVENT, updateVoiceToggle);
   }
 
   function speakText(text, button) {
@@ -547,9 +720,17 @@
     utterance.lang = "zh-CN";
     utterance.rate = 0.88;
     utterance.pitch = 1;
+    // 动态内容来不及预合成，只能走浏览器：优先挑听起来自然一点的中文音色
     const voices = window.speechSynthesis.getVoices();
-    const zhVoice = voices.find((voice) => /zh[-_]CN/i.test(voice.lang));
-    if (zhVoice) utterance.voice = zhVoice;
+    const zhVoices = voices.filter(
+      (voice) => /zh[-_]CN/i.test(voice.lang) || /Chinese|普通话|中文/i.test(voice.name)
+    );
+    const preferred = ["Natural", "Xiaoxiao", "Xiaoyi", "Yunxi", "Huihui", "Kangkang", "Ting-Ting"];
+    const pickedVoice =
+      preferred
+        .map((keyword) => zhVoices.find((voice) => voice.name.indexOf(keyword) >= 0))
+        .find(Boolean) || zhVoices[0];
+    if (pickedVoice) utterance.voice = pickedVoice;
 
     activeUtterance = utterance;
     activeSpeakButton = button || null;
@@ -598,10 +779,23 @@
         return;
       }
 
+      // 固定文案优先播预合成的录音，失败再退回浏览器合成（必须放在 data-read-text 之前判断）
+      const audioButton = event.target.closest("[data-read-audio]");
+      if (audioButton) {
+        event.preventDefault();
+        playVoice(
+          audioButton.dataset.readAudio,
+          audioButton,
+          audioButton.dataset.readText || ""
+        );
+        return;
+      }
+
       const textButton = event.target.closest("[data-read-text]");
       if (textButton) {
         event.preventDefault();
         speakText(textButton.dataset.readText, textButton);
+        return;
       }
     });
   }
@@ -631,6 +825,14 @@
     toastTimer = window.setTimeout(() => {
       if (toast.parentNode) toast.remove();
     }, 3200);
+
+    // 提示只出现在屏幕上，老人经常看不见；顺手读出来。
+    // 正在播结论时不插话，避免把正在说的那句打断。
+    if (settings.autoRead && canSpeak() && !isVoicePlaying()) {
+      window.setTimeout(() => {
+        if (!isVoicePlaying()) speakText(message);
+      }, 150);
+    }
   }
 
   /* ---------- 复制与分享 ---------- */
@@ -782,6 +984,7 @@
     hydrateIcons();
     injectDisplayDialog();
     injectContactDialog();
+    injectVoiceToggle();
     hydrateIcons();
     bindDialogs();
     bindSpeechButtons();
@@ -821,6 +1024,10 @@
     showToast,
     speakText,
     stopSpeaking,
+    playVoice,
+    unlockVoice,
+    preloadVoice,
+    isVoicePlaying,
     speakPage,
     copyText,
     shareText,

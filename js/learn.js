@@ -285,6 +285,8 @@
     const content = $("#lessonDialogContent");
     if (!dialog || !content) return;
     const done = isCompleted(lesson.id);
+    // 打开这节课时就先把音频取下来，点「读给我听」不用等
+    NY.preloadVoice(`/assets/voice/lessons/${lesson.id}.mp3`);
 
     content.innerHTML = `
       <div class="lesson-dialog-head tone-${lesson.tone}">
@@ -332,7 +334,12 @@
     NY.icons(content);
 
     content.querySelector("[data-lesson-read]").addEventListener("click", (event) => {
-      NY.speakText(buildLessonSpeech(lesson), event.currentTarget);
+      // 课堂正文用 CosyVoice 预合成的音频，浏览器合成只作兜底
+      NY.playVoice(
+        `/assets/voice/lessons/${lesson.id}.mp3`,
+        event.currentTarget,
+        buildLessonSpeech(lesson)
+      );
     });
 
     content.querySelector("[data-lesson-copy]").addEventListener("click", () => {
@@ -421,6 +428,9 @@
         <div class="quiz-progress-track" aria-hidden="true"><span style="width:${progress}%"></span></div>
       </div>
       <h3 class="quiz-question" id="quizQuestion" tabindex="-1">${question.question}</h3>
+      <button class="quiz-read" type="button" data-quiz-read>
+        <span data-icon="volume"></span>把题目读一遍
+      </button>
       <div class="quiz-options" role="group" aria-labelledby="quizQuestion">
         ${question.options
           .map(
@@ -444,6 +454,8 @@
       </div>`;
 
     NY.icons(card);
+    // 下一题的语音提前取好，点「读题」不用等
+    NY.preloadVoice(`/assets/voice/quiz/q${state.quizIndex + 1}.mp3`);
   }
 
   function answerQuiz(optionIndex) {
@@ -480,6 +492,15 @@
       feedbackText.innerHTML = correct
         ? `<strong>答对了。</strong>${question.explanation}`
         : `<strong>这次没选对，正确答案是 ${correctLetter}。</strong>${question.explanation}`;
+
+      // 作答结果只在屏幕上一闪而过，用预合成的语音读出来
+      if (NY.getSettings().autoRead) {
+        const spoken = correct
+          ? `答对了。${question.explanation}`
+          : `这次没选对。正确答案是 ${correctLetter}，${question.options[question.correct]}。${question.explanation}`;
+        const src = `/assets/voice/quiz/q${state.quizIndex + 1}-${correct ? "right" : "wrong"}.mp3`;
+        window.setTimeout(() => NY.playVoice(src, null, spoken), 150);
+      }
     }
 
     if (hint) hint.textContent = correct ? "很好，继续保持。" : "别急，记住这个细节就好。";
@@ -581,6 +602,19 @@
         nextQuiz();
         return;
       }
+      const read = event.target.closest("[data-quiz-read]");
+      if (read) {
+        const question = QUESTIONS[state.quizIndex];
+        if (question) {
+          const letters = ["A", "B", "C", "D"];
+          const options = question.options
+            .map((option, index) => `${letters[index]}，${option}`)
+            .join("；");
+          const spoken = `第 ${state.quizIndex + 1} 题。${question.question} 选项：${options}`;
+          NY.playVoice(`/assets/voice/quiz/q${state.quizIndex + 1}.mp3`, read, spoken);
+        }
+        return;
+      }
       const restart = event.target.closest("[data-quiz-restart]");
       if (restart) restartQuiz();
     });
@@ -610,6 +644,10 @@
         item.setAttribute("aria-pressed", String(active));
       });
       renderLessons();
+      const total = LESSONS.filter(
+        (lesson) => state.filter === "all" || lesson.category === state.filter
+      ).length;
+      NY.showToast(`${button.textContent.trim()}，共 ${total} 节课`);
     });
 
     continueBtn.addEventListener("click", (event) => {

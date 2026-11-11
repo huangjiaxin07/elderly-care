@@ -13,3 +13,4 @@ server/test*.db
 # 探测脚本与测试产生的临时文件
 *.log
 server/tests/*.mp3
+.chrome-cdp/

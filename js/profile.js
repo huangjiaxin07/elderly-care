@@ -93,7 +93,7 @@
       autoRead.addEventListener("change", () => {
         NY.saveSettings(
           { autoRead: autoRead.checked },
-          { toast: autoRead.checked ? "识别完成后会自动朗读" : "已关闭自动朗读" }
+          { toast: autoRead.checked ? "识别完会自动读一句结论" : "已关闭自动播报" }
         );
       });
     }
@@ -209,7 +209,7 @@
       .slice(0, 6)
       .map(
         (item) => `
-        <a class="profile-history-item" href="fraud.html">
+        <a class="profile-history-item" href="/fraud">
           <span class="profile-history-risk risk-${item.result.level || "none"}">${NY.escapeHTML(
             item.result.label || "识别记录"
           )}</span>
