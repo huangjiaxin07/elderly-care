@@ -176,14 +176,29 @@
 
 .profile-side {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 1;
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+/* 右列比左边短时，让「学习小档案」向下长，把剩下的高度填满 */
+.learning-summary-card {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* 标题和进度贴住顶部，把「去手机课堂」压到卡片底部，中间自然留白 */
+.learning-summary-card .profile-text-link {
+  margin-top: auto;
+}
+
+/* 安全识别记录横向铺满，不再挤在左半边 */
 .history-card {
-  grid-column: 1;
+  grid-column: 1 / -1;
   grid-row: 2;
 }
 
@@ -756,10 +771,17 @@
 
   .profile-name-row {
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .profile-name-row .input {
     width: 100%;
+  }
+
+  /* 输入框占满一行后，按钮另起一行，别把「保存称呼」挤成竖排 */
+  .profile-name-row .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   .profile-side {

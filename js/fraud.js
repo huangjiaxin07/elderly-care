@@ -85,6 +85,28 @@
       mantra: "凡是要求转账的，先挂断再核实。"
     };
   }
+
+  // 固定结论用预合成的语音，音色统一、点击后零等待；
+  // 只有三档，不念分数（分数是给眼睛看的，「95 分」容易被听成「95%」）。
+  const VOICE_BY_LEVEL = {
+    high: "/assets/voice/high.mp3",
+    medium: "/assets/voice/medium.mp3",
+    low: "/assets/voice/low.mp3",
+    none: "/assets/voice/low.mp3",
+  };
+  const VOICE_TEXT_BY_LEVEL = {
+    high: "这条消息高度可疑。先别转账，也别点链接，可以打九六一零问问。",
+    medium: "这条消息值得留意。先跟家人核实，别急着回复。",
+    low: "暂时没发现明显问题。但涉及转账，还是要核实。",
+    none: "暂时没发现明显问题。但涉及转账，还是要核实。",
+  };
+
+  function speakResultSummary(result) {
+    if (!result || !NY.getSettings().autoRead) return;
+    const src = VOICE_BY_LEVEL[result.level] || VOICE_BY_LEVEL.low;
+    const text = VOICE_TEXT_BY_LEVEL[result.level] || VOICE_TEXT_BY_LEVEL.low;
+    window.setTimeout(() => NY.playVoice(src, null, text), 250);
+  }
   // ====================================================================
 
   function $(selector) {
@@ -116,7 +138,7 @@
     button.setAttribute("aria-busy", String(value));
     const strong = button.querySelector("strong");
     const small = button.querySelector("small");
-    if (strong) strong.textContent = value ? "正在仔细看…" : "开始 AI 识别";
+    if (strong) strong.textContent = value ? "正在识别…" : "开始 AI 识别";
     if (small) small.textContent = value ? "请稍等几秒钟" : "大约需要几秒钟";
   }
 
@@ -133,6 +155,12 @@
     }
     setInputError("");
     setAnalyzing(true);
+    // 同步栈里出声：既是「我在看了」的回应，也用来解锁 iOS 之后要播的结论。
+    if (NY.getSettings().autoRead) {
+      NY.playVoice("/assets/voice/recognizing.mp3", null, "正在识别");
+    } else {
+      NY.unlockVoice();
+    }
     const status = $("#analysisStatus");
     const streamDom = $("#streamResult");
     if (status) status.textContent = "正在请求AI分析，请稍候…";
@@ -216,9 +244,8 @@
           });
         }, 60);
       }
-      if (NY.getSettings().autoRead) {
-        window.setTimeout(() => NY.speakText(buildSpeechText(result)), 800);
-      }
+      // 自动播报只念一句结论（预合成 mp3）；想听完整依据，点结果卡上的「读给我听」。
+      speakResultSummary(result);
     } catch (err) {
       console.error(err);
       // AI 不可用时回退本地规则引擎：断网、后端异常、超时都还能出结果
@@ -239,6 +266,7 @@
         const localSection = $("#resultSection");
         if (localSection) localSection.hidden = false;
         NY.showToast("AI 暂不可用，已用本地规则判断", "warm");
+        speakResultSummary(local);
       } else {
         NY.showToast("识别时出了一点小问题，请再试一次。", "error");
       }
@@ -661,6 +689,11 @@
     const historyList = $("#historyList");
     const clearHistory = $("#clearHistoryBtn");
     const status = $("#analysisStatus");
+
+    // 预加载播报音频：点下去就能出声，不等网络。
+    ["recognizing", "high", "medium", "low"].forEach((name) => {
+      NY.preloadVoice(`/assets/voice/${name}.mp3`);
+    });
 
     input.addEventListener("input", updateCharCount);
     input.addEventListener("keydown", (event) => {

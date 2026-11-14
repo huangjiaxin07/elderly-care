@@ -185,6 +185,11 @@
   font-size: 1.35rem;
 }
 
+.service-icon.tone-green {
+  color: var(--brand-dark);
+  background: var(--brand-soft);
+}
+
 .service-icon.tone-gold {
   color: #80530b;
   background: var(--gold-soft);

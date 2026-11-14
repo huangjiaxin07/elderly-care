@@ -953,6 +953,109 @@ fieldset {
   font-size: 0.78rem;
 }
 
+/* 备案号：品牌色在深色页脚上对比度太低，改为跟随页脚文字颜色 */
+.footer-bottom a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 250, 240, 0.3);
+  text-underline-offset: 0.2em;
+}
+
+.footer-bottom a:hover,
+.footer-bottom a:focus-visible {
+  color: rgba(255, 250, 240, 0.88);
+  text-decoration-color: currentColor;
+}
+
+/* ---------- 语音播报开关（固定位置，随时可关） ---------- */
+
+.voice-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 240;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 56px;
+  padding: 0 1.15rem 0 0.95rem;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--brand);
+  background: var(--paper);
+  border: 2px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  border-radius: 999px;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.voice-toggle:hover {
+  border-color: var(--brand);
+  background: var(--brand-pale);
+}
+
+.voice-toggle:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* 关掉时只剩下绿色描边和绿字，和「已开启」的实心绿一眼能分开 */
+.voice-toggle[aria-pressed="true"] {
+  color: #fffdf5;
+  background: var(--brand);
+  border-color: var(--brand-dark);
+}
+
+.voice-toggle[aria-pressed="true"]:hover {
+  background: var(--brand-dark);
+}
+
+.voice-toggle-icons {
+  display: inline-flex;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.voice-icon-off,
+.voice-toggle[aria-pressed="false"] .voice-icon-on {
+  display: none;
+}
+
+.voice-toggle[aria-pressed="false"] .voice-icon-off {
+  display: inline-flex;
+}
+
+.voice-toggle.is-speaking {
+  animation: voice-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes voice-pulse {
+  0%,
+  100% {
+    box-shadow: var(--shadow-md);
+  }
+  50% {
+    box-shadow: 0 0 0 9px color-mix(in srgb, var(--brand) 16%, transparent);
+  }
+}
+
+[data-motion="off"] .voice-toggle.is-speaking {
+  animation: none;
+}
+
+@media (max-width: 560px) {
+  .voice-toggle {
+    right: 12px;
+    bottom: 12px;
+    min-height: 52px;
+    padding: 0 0.95rem 0 0.8rem;
+    font-size: 0.95rem;
+  }
+}
+
 /* ---------- 弹窗 ---------- */
 
 dialog.modal {

@@ -181,36 +181,42 @@
   justify-content: center;
   overflow: hidden;
   color: var(--cover-ink);
-  background: var(--cover-bg);
+  background: linear-gradient(135deg, var(--cover-bg) 0%, var(--cover-bg2) 100%);
 }
 
 .cover-tone-green {
   --cover-bg: #195f4e;
+  --cover-bg2: #2f7d66;
   --cover-ink: #f3d99d;
 }
 
 .cover-tone-blue {
   --cover-bg: #355f78;
+  --cover-bg2: #4f86a3;
   --cover-ink: #dce9ef;
 }
 
 .cover-tone-gold {
   --cover-bg: #edcd84;
+  --cover-bg2: #f8e6b8;
   --cover-ink: #5d3d06;
 }
 
 .cover-tone-clay {
   --cover-bg: #b9572f;
+  --cover-bg2: #d67a52;
   --cover-ink: #ffe9dd;
 }
 
 .cover-tone-red {
   --cover-bg: #8c392e;
+  --cover-bg2: #ad5344;
   --cover-ink: #f5d7cf;
 }
 
 .cover-tone-plum {
   --cover-bg: #5b4b62;
+  --cover-bg2: #7d6887;
   --cover-ink: #eadcf0;
 }
 
@@ -657,6 +663,32 @@
 .quiz-hint {
   color: var(--ink-faint);
   font-size: 0.66rem;
+}
+
+/* 题目朗读：小屏上读题最吃力，给一个常驻的入口 */
+.quiz-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+  padding: 0.4rem 0.8rem;
+  color: var(--brand-dark);
+  background: var(--brand-pale);
+  border: 1px solid var(--brand-soft);
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quiz-read:hover {
+  background: var(--brand-soft);
+}
+
+.quiz-read:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 2px;
 }
 
 .quiz-footer .btn {

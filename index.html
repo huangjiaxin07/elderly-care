@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#f5f0e5" />
   <meta name="description" content="银龄无诈是为长辈设计的数字助老平台:大字模式、便民办事步骤、AI 反诈识别，让数字生活更简单、更安心。" />
   <title>银龄无诈 · 数字生活，有人帮</title>
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="css/base.css" />
-  <link rel="stylesheet" href="css/pages.css" />
-  <script src="js/app.js" defer></script>
-  <script src="js/home.js" defer></script>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/pages.css" />
+  <script src="/js/app.js" defer></script>
+  <script src="/js/home.js" defer></script>
 </head>
 <body data-page="home">
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -28,7 +28,7 @@
 
   <header class="site-header">
     <div class="container-wide header-inner">
-      <a class="brand" href="index.html" aria-label="银龄无诈首页">
+      <a class="brand" href="/" aria-label="银龄无诈首页">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 48 48">
             <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
@@ -45,11 +45,11 @@
       </a>
 
       <nav class="site-nav" id="siteNav" aria-label="主导航">
-        <a class="nav-link" href="index.html" aria-current="page">首页</a>
-        <a class="nav-link" href="fraud.html">反诈检测</a>
-        <a class="nav-link" href="services.html">便民服务</a>
-        <a class="nav-link" href="learn.html">手机课堂</a>
-        <a class="nav-link" href="profile.html">我的</a>
+        <a class="nav-link" href="/" aria-current="page">首页</a>
+        <a class="nav-link" href="/fraud">反诈检测</a>
+        <a class="nav-link" href="/services">便民服务</a>
+        <a class="nav-link" href="/learn">手机课堂</a>
+        <a class="nav-link" href="/profile">我的</a>
       </nav>
 
       <div class="header-actions">
@@ -82,18 +82,18 @@
             银龄无诈为长辈准备了更大的字、更清楚的步骤，还有一位会看可疑消息的 AI 帮手。复杂的事，我们陪您慢慢来。
           </p>
           <div class="hero-actions">
-            <a class="btn btn-primary btn-lg" href="fraud.html">
+            <a class="btn btn-primary btn-lg" href="/fraud">
               <span class="btn-icon" data-icon="search-shield"></span>
               帮我看看可疑消息
               <span class="btn-arrow" data-icon="arrow-right"></span>
             </a>
-            <a class="btn btn-secondary btn-lg" href="learn.html">
+            <a class="btn btn-secondary btn-lg" href="/learn">
               <span class="btn-icon" data-icon="book-open"></span>
               先学一个小技巧
             </a>
           </div>
           <ul class="trust-list" aria-label="平台特点">
-            <li><span data-icon="lock"></span>本地识别，聊天内容不上传</li>
+            <li><span data-icon="lock"></span>AI 辅助判断，内容仅用于本次判断</li>
             <li><span data-icon="type"></span>大字大按钮，看得清</li>
             <li><span data-icon="volume"></span>随时可以读给您听</li>
           </ul>
@@ -139,8 +139,8 @@
             </div>
 
             <div class="guardian-foot">
-              <span><span data-icon="lock"></span>内容只在本机分析</span>
-              <a href="fraud.html">我也试试<span data-icon="arrow-right"></span></a>
+              <span><span data-icon="lock"></span>内容仅用于本次判断</span>
+              <a href="/fraud">我也试试<span data-icon="arrow-right"></span></a>
             </div>
           </article>
 
@@ -161,11 +161,11 @@
             <h2 class="section-title" id="quickTitle">点一下，就有人带您一步步来</h2>
             <p class="section-desc">不用记复杂步骤，也不怕点错。每个入口都把话说得明白。</p>
           </div>
-          <a class="text-link" href="services.html">全部便民服务<span data-icon="arrow-right"></span></a>
+          <a class="text-link" href="/services">全部便民服务<span data-icon="arrow-right"></span></a>
         </div>
 
         <div class="quick-grid">
-          <a class="quick-card quick-card-featured" href="fraud.html">
+          <a class="quick-card quick-card-featured" href="/fraud">
             <span class="quick-icon"><span data-icon="search-shield"></span></span>
             <span class="quick-body">
               <strong>识别可疑信息</strong>
@@ -175,7 +175,7 @@
             <span class="quick-tag">最常用</span>
           </a>
 
-          <a class="quick-card" href="learn.html?lesson=video">
+          <a class="quick-card" href="/learn?lesson=video">
             <span class="quick-icon tone-green"><span data-icon="video"></span></span>
             <span class="quick-body">
               <strong>和家人视频</strong>
@@ -184,7 +184,7 @@
             <span class="quick-arrow" data-icon="arrow-right"></span>
           </a>
 
-          <a class="quick-card" href="services.html#appointment">
+          <a class="quick-card" href="/services#appointment">
             <span class="quick-icon tone-gold"><span data-icon="calendar"></span></span>
             <span class="quick-body">
               <strong>预约医院挂号</strong>
@@ -193,7 +193,7 @@
             <span class="quick-arrow" data-icon="arrow-right"></span>
           </a>
 
-          <a class="quick-card" href="services.html#social-security">
+          <a class="quick-card" href="/services#social-security">
             <span class="quick-icon tone-blue"><span data-icon="id-card"></span></span>
             <span class="quick-body">
               <strong>查社保医保</strong>
@@ -202,7 +202,7 @@
             <span class="quick-arrow" data-icon="arrow-right"></span>
           </a>
 
-          <a class="quick-card" href="services.html#utilities">
+          <a class="quick-card" href="/services#utilities">
             <span class="quick-icon tone-clay"><span data-icon="wallet"></span></span>
             <span class="quick-body">
               <strong>生活缴费</strong>
@@ -211,7 +211,7 @@
             <span class="quick-arrow" data-icon="arrow-right"></span>
           </a>
 
-          <a class="quick-card" href="services.html#emergency">
+          <a class="quick-card" href="/services#emergency">
             <span class="quick-icon tone-red"><span data-icon="siren"></span></span>
             <span class="quick-body">
               <strong>紧急求助</strong>
@@ -249,11 +249,11 @@
           </ul>
 
           <div class="safety-actions">
-            <a class="btn btn-primary" href="fraud.html">
+            <a class="btn btn-primary" href="/fraud">
               免费识别一条消息
               <span class="btn-arrow" data-icon="arrow-right"></span>
             </a>
-            <span class="privacy-inline"><span data-icon="lock"></span>无需登录 · 内容不上传</span>
+            <span class="privacy-inline"><span data-icon="lock"></span>无需登录 · 即开即用</span>
           </div>
         </div>
 
@@ -290,7 +290,7 @@
               <p><strong>记住一句话：</strong>让您急着转账、点链接、给验证码的，先停下来。</p>
             </div>
           </div>
-          <a class="inspect-more" href="fraud.html">我也有一条消息要看看<span data-icon="arrow-right"></span></a>
+          <a class="inspect-more" href="/fraud">我也有一条消息要看看<span data-icon="arrow-right"></span></a>
         </div>
       </div>
     </section>
@@ -304,11 +304,11 @@
             <h2 class="section-title" id="lessonsTitle">每天学一点，手机也好用一点</h2>
             <p class="section-desc">每节课只讲一件小事，可以慢慢看，也可以读给您听。</p>
           </div>
-          <a class="text-link" href="learn.html">去手机课堂<span data-icon="arrow-right"></span></a>
+          <a class="text-link" href="/learn">去手机课堂<span data-icon="arrow-right"></span></a>
         </div>
 
         <div class="lesson-grid">
-          <a class="lesson-card" href="learn.html?lesson=video">
+          <a class="lesson-card" href="/learn?lesson=video">
             <div class="lesson-cover cover-green">
               <span class="lesson-number">01</span>
               <span class="cover-pattern" aria-hidden="true"></span>
@@ -326,7 +326,7 @@
             </div>
           </a>
 
-          <a class="lesson-card" href="learn.html?lesson=voice">
+          <a class="lesson-card" href="/learn?lesson=voice">
             <div class="lesson-cover cover-gold">
               <span class="lesson-number">02</span>
               <span class="cover-pattern" aria-hidden="true"></span>
@@ -344,7 +344,7 @@
             </div>
           </a>
 
-          <a class="lesson-card" href="learn.html?lesson=fake-link">
+          <a class="lesson-card" href="/learn?lesson=fake-link">
             <div class="lesson-cover cover-clay">
               <span class="lesson-number">03</span>
               <span class="cover-pattern" aria-hidden="true"></span>
@@ -377,8 +377,8 @@
           <div class="trust-grid">
             <div class="trust-item">
               <span class="trust-icon" data-icon="lock"></span>
-              <h3>内容不上传</h3>
-              <p>反诈识别在本地完成，聊天内容不会离开您的设备。</p>
+              <h3>内容不留存</h3>
+              <p>识别内容仅用于本次判断，不保存、不用于其他用途。</p>
             </div>
             <div class="trust-item">
               <span class="trust-icon" data-icon="type"></span>
@@ -403,7 +403,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <a class="brand" href="index.html" aria-label="银龄无诈首页">
+        <a class="brand" href="/" aria-label="银龄无诈首页">
           <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 48 48">
               <circle cx="24" cy="22" r="8.6" fill="#f1c35d"></circle>
@@ -423,10 +423,10 @@
       <div>
         <h3 class="footer-heading">常用入口</h3>
         <ul class="footer-links">
-          <li><a href="fraud.html">反诈识别</a></li>
-          <li><a href="services.html">便民服务</a></li>
-          <li><a href="learn.html">手机课堂</a></li>
-          <li><a href="profile.html">我的设置</a></li>
+          <li><a href="/fraud">反诈识别</a></li>
+          <li><a href="/services">便民服务</a></li>
+          <li><a href="/learn">手机课堂</a></li>
+          <li><a href="/profile">我的设置</a></li>
         </ul>
       </div>
       <div>
