@@ -1,0 +1,13 @@
+a81a9a0 | huangjiaxin07 | 2026-10-30 16:28:08 | fix:亲情联系人仅校验11位数字，取消号段限制
+f5b9ae0 | huangjiaxin07 | 2026-10-29 13:01:23 | Merge branch 'main' of https://github.com/huangjiaxin07/elderly-care
+4fe3bad | huangjiaxin07 | 2026-10-29 13:00:33 | feat:页面底部添加备案占位
+abee4cb | JaxonBurling | 2026-10-28 13:06:08 | docs: 说明登录与档案为预留能力，前端刻意不启用
+bf71d86 | JaxonBurling | 2026-10-28 12:57:32 | fix: 修复了反诈页对接后端的 4 个致命问题
+4b5d03b | huangjiaxin07 | 2026-10-28 00:06:26 | feat:反诈页对接后端流式API，改为异步请求，增加11字段适配器，移除假延迟动画
+5ab4b45 | huangjiaxin07 | 2026-10-26 21:40:02 | Merge branch 'main' of https://github.com/huangjiaxin07/elderly-care
+891806f | huangjiaxin07 | 2026-10-26 21:39:25 | feat：前端配置vite代理，改造反诈页面对接API
+d8484bc | JaxonBurling | 2026-10-26 19:52:34 | 后端API更新
+e9e6a67 | JaxonBurling | 2026-10-26 17:44:54 | Merge branch 'main' of github.com:huangjiaxin07/elderly-care
+e35b749 | JaxonBurling | 2026-10-26 17:43:12 | 更新了服务端
+e086257 | JaxonBurling | 2026-10-26 17:40:30 | 更新了服务端
+b8d71a3 | JaxonBurling | 2026-10-24 20:54:28 | 干净的全新初始提交，彻底忽略node_modules
