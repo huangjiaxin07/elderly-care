@@ -699,6 +699,28 @@
     document.addEventListener(SETTINGS_EVENT, updateVoiceToggle);
   }
 
+  // 只认普通话：粤语 / 台湾腔 / 港澳中文都不选，宁可用系统默认也不念成粤语
+  function isMandarinVoice(voice) {
+    const lang = String(voice.lang || "").toLowerCase();
+    const name = String(voice.name || "");
+    if (/cantonese|yue|粤|廣東話|广东话|hong ?kong|sin-ji|mei-jia/i.test(name)) return false;
+    if (/^yue/i.test(lang)) return false;
+    if (/^zh[-_]?(hk|tw|hant)/.test(lang)) return false;
+    if (/^zh[-_]?(cn|hans)/.test(lang)) return true;
+    return /mandarin|普通话|简体/.test(name);
+  }
+
+  function pickMandarinVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const mandarin = voices.filter(isMandarinVoice);
+    const preferred = ["Natural", "Xiaoxiao", "Xiaoyi", "Yunxi", "Huihui", "Kangkang", "Ting-Ting"];
+    return (
+      preferred
+        .map((keyword) => mandarin.find((voice) => voice.name.indexOf(keyword) >= 0))
+        .find(Boolean) || mandarin[0] || null
+    );
+  }
+
   function speakText(text, button) {
     if (!canSpeak()) {
       showToast("当前浏览器不支持语音朗读，建议使用最新版 Edge 或 Chrome。", "error");
@@ -720,17 +742,18 @@
     utterance.lang = "zh-CN";
     utterance.rate = 0.88;
     utterance.pitch = 1;
-    // 动态内容来不及预合成，只能走浏览器：优先挑听起来自然一点的中文音色
-    const voices = window.speechSynthesis.getVoices();
-    const zhVoices = voices.filter(
-      (voice) => /zh[-_]CN/i.test(voice.lang) || /Chinese|普通话|中文/i.test(voice.name)
-    );
-    const preferred = ["Natural", "Xiaoxiao", "Xiaoyi", "Yunxi", "Huihui", "Kangkang", "Ting-Ting"];
-    const pickedVoice =
-      preferred
-        .map((keyword) => zhVoices.find((voice) => voice.name.indexOf(keyword) >= 0))
-        .find(Boolean) || zhVoices[0];
-    if (pickedVoice) utterance.voice = pickedVoice;
+    // 动态内容来不及预合成，只能走浏览器。
+    // 这里必须只挑「普通话」音色：安卓 / iOS 上同一台设备往往同时装了
+    // 粤语、台湾腔的音色，名字里都带 Chinese，选错就会念成粤语。
+    const pickedVoice = pickMandarinVoice();
+    if (pickedVoice) {
+      try {
+        utterance.voice = pickedVoice;
+        utterance.lang = pickedVoice.lang || "zh-CN";
+      } catch (error) {
+        /* 个别浏览器不接受非原生 voice，保持 lang=zh-CN 即可 */
+      }
+    }
 
     activeUtterance = utterance;
     activeSpeakButton = button || null;
@@ -1024,6 +1047,8 @@
     showToast,
     speakText,
     stopSpeaking,
+    pickMandarinVoice,
+    isMandarinVoice,
     playVoice,
     unlockVoice,
     preloadVoice,
