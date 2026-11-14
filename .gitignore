@@ -14,3 +14,8 @@ server/test*.db
 *.log
 server/tests/*.mp3
 .chrome-cdp/
+
+# 本地工作笔记，不进仓库
+会话记忆.md
+语音分级清单.md
+语音播报-改动清单.md
